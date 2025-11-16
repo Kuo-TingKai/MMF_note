@@ -399,6 +399,8 @@ body::before {
   overflow: visible;
   /* 添加額外的質感層 */
   position: relative;
+  /* 允許破洞效果 */
+  isolation: isolate;
 }
 
 /* 為內容區域添加額外的污漬層 */
@@ -481,6 +483,51 @@ body::before {
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
+}
+
+/* 破洞效果容器 */
+.parchment-holes-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+/* 破洞元素 - 使用偽元素創建真正的透明破洞 */
+.parchment-hole {
+  position: absolute;
+  pointer-events: none;
+  /* 創建真正的透明破洞 */
+  background: transparent;
+  /* 使用偽元素創建邊緣效果 */
+}
+
+.parchment-hole::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    transparent 30%,
+    rgba(139, 111, 71, 0.15) 50%,
+    rgba(139, 111, 71, 0.08) 70%,
+    transparent 100%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* 破洞邊緣效果 */
+.parchment-hole-edge {
+  position: absolute;
+  pointer-events: none;
 }
 
 /* 為卡片也添加皺摺效果 */
