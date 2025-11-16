@@ -1,0 +1,40 @@
+# Jekyll Configuration for GitHub Pages
+title: 模形式與模擬模形式文檔
+description: 模形式與模擬模形式理論的完整文檔與速查表
+author: Kevin K
+url: https://kuo-tingkai.github.io
+baseurl: /MMF_note
+
+# Jekyll settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Kramdown settings for math
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+
+# Navigation
+navigation:
+  - title: 首頁
+    url: /
+  - title: 主速查表
+    url: /mmf_sheet.html
+  - title: 補充概念
+    url: /supplement_sheet.html
+
+# Exclude files
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .git
+  - .gitignore
+
