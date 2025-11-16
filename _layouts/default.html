@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ page.description | default: site.description | default: "模形式與模擬模形式理論的完整文檔與速查表" }}">
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    
+    <!-- 自定義 CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    
+    <!-- MathJax -->
+    {% include head.html %}
+    
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrapper">
+        <a class="site-title" rel="author" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+        <nav class="site-nav">
+          <a href="{{ '/' | relative_url }}">首頁</a>
+          <a href="{{ '/mmf_sheet.html' | relative_url }}">主速查表</a>
+          <a href="{{ '/supplement_sheet.html' | relative_url }}">補充概念</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-content wrapper">
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrapper">
+        <p class="text-center" style="text-align: center; color: var(--text-light); padding: 2rem 0;">
+          &copy; {{ 'now' | date: "%Y" }} {{ site.author | default: site.title }}. 
+          使用 <a href="https://jekyllrb.com" target="_blank">Jekyll</a> 和 
+          <a href="https://pages.github.com" target="_blank">GitHub Pages</a> 構建。
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
+

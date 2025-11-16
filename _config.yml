@@ -8,7 +8,7 @@ baseurl: /MMF_note
 # Jekyll settings
 markdown: kramdown
 highlighter: rouge
-theme: minima
+# theme: minima  # 使用自定義布局，不使用主題
 
 # Plugins
 plugins:
