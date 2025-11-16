@@ -37,4 +37,5 @@ exclude:
   - vendor
   - .git
   - .gitignore
+  - fe_sheet.md  # 前端技術速查表，不顯示在網站上
 
