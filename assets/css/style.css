@@ -1,31 +1,78 @@
-/* 中世紀古書風格樣式 - 模形式與模擬模形式文檔 */
+/* 中世紀手寫書羊皮紙風格 - 使用先進網頁渲染技術 */
 
 :root {
   --parchment: #f4e8d0;
   --parchment-dark: #e8d5b7;
   --parchment-light: #faf7f0;
+  --parchment-aged: #e6d4b3;
   --ink: #2c1810;
   --ink-light: #4a3428;
+  --ink-faded: #6b5b4f;
   --gold: #c9a961;
   --gold-dark: #8b6914;
+  --gold-light: #e6d4a8;
   --border-brown: #8b6f47;
   --border-light: #d4c4a8;
   --accent-red: #8b4513;
-  --shadow-ink: rgba(44, 24, 16, 0.3);
+  --shadow-ink: rgba(44, 24, 16, 0.4);
+  --shadow-parchment: rgba(139, 111, 71, 0.2);
 }
 
-/* 全局樣式 - 古書質感 */
+/* 全局樣式 - 羊皮紙質感 */
 body {
   font-family: "Noto Serif TC", "Noto Serif SC", "Times New Roman", serif;
-  line-height: 1.8;
+  line-height: 1.9;
   color: var(--ink);
   background: 
-    linear-gradient(90deg, var(--parchment-dark) 0%, var(--parchment) 50%, var(--parchment-dark) 100%),
-    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='paper' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='50' cy='50' r='0.5' fill='%23d4c4a8' opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23paper)'/%3E%3C/svg%3E");
+    /* 基礎羊皮紙顏色 */
+    linear-gradient(135deg, var(--parchment-aged) 0%, var(--parchment) 25%, var(--parchment-light) 50%, var(--parchment) 75%, var(--parchment-aged) 100%),
+    /* 紙張紋理 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.03) 2px,
+      rgba(139, 111, 71, 0.03) 4px
+    ),
+    /* 不規則斑點 */
+    radial-gradient(circle at 20% 30%, rgba(139, 111, 71, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(139, 111, 71, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.03) 0%, transparent 50%);
+  background-size: 100% 100%, 100% 8px, 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
   min-height: 100vh;
   padding: 0;
   margin: 0;
+  position: relative;
+  /* 添加微妙的紙張質感濾鏡 */
+  filter: sepia(5%) contrast(98%) brightness(102%);
+}
+
+/* 紙張老化效果 - 使用偽元素 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    /* 不規則老化斑點 */
+    radial-gradient(ellipse at 15% 20%, rgba(139, 111, 71, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 80%, rgba(139, 111, 71, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 10%, rgba(201, 169, 97, 0.05) 0%, transparent 30%),
+    /* 細微的紙張纖維 */
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 111, 71, 0.02) 1px,
+      rgba(139, 111, 71, 0.02) 2px
+    );
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
 }
 
 /* 容器 */
@@ -33,43 +80,59 @@ body {
   max-width: 900px;
   margin: 0 auto;
   padding: 0 40px;
+  position: relative;
+  z-index: 1;
 }
 
 /* 導航欄 - 古書風格 */
 .site-header {
   background: 
-    linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-dark) 100%),
+    /* 金色背景漸變 */
+    linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%, var(--gold-dark) 100%),
+    /* 裝飾性條紋 */
     repeating-linear-gradient(
       45deg,
       transparent,
-      transparent 10px,
-      rgba(139, 105, 20, 0.1) 10px,
-      rgba(139, 105, 20, 0.1) 20px
+      transparent 8px,
+      rgba(139, 105, 20, 0.1) 8px,
+      rgba(139, 105, 20, 0.1) 16px
     );
   color: var(--ink);
   padding: 1.5rem 0;
+  border-top: 4px double var(--border-brown);
   border-bottom: 4px double var(--border-brown);
-  box-shadow: 0 4px 8px var(--shadow-ink);
+  box-shadow: 
+    0 4px 12px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   position: relative;
-}
-
-.site-header::before,
-.site-header::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--border-brown);
+  z-index: 10;
+  /* 3D 效果 */
+  transform: perspective(1000px) rotateX(0deg);
+  transition: transform 0.3s ease;
 }
 
 .site-header::before {
+  content: '';
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border-brown), transparent);
+  box-shadow: 0 2px 4px var(--shadow-ink);
 }
 
 .site-header::after {
+  content: '';
+  position: absolute;
   bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border-brown), transparent);
+  box-shadow: 0 -2px 4px var(--shadow-ink);
 }
 
 .site-header .wrapper {
@@ -77,6 +140,8 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
 .site-title {
@@ -85,14 +150,25 @@ body {
   margin: 0;
   color: var(--ink);
   text-decoration: none;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-  letter-spacing: 1px;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.3),
+    1px 1px 2px rgba(255, 255, 255, 0.5);
+  letter-spacing: 2px;
   font-family: "Noto Serif TC", serif;
+  position: relative;
+  transition: all 0.3s ease;
+  /* 手寫效果 */
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern";
 }
 
 .site-title:hover {
   color: var(--accent-red);
   text-decoration: underline;
+  transform: translateY(-1px);
+  text-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.4),
+    1px 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 .site-nav {
@@ -110,15 +186,38 @@ body {
   border: 2px solid var(--border-brown);
   border-radius: 4px;
   background: var(--parchment-light);
-  transition: all 0.3s;
-  box-shadow: 2px 2px 4px var(--shadow-ink);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    2px 2px 4px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
   font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+  /* 3D 按鈕效果 */
+  transform: perspective(500px) translateZ(0);
+}
+
+.site-nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.site-nav a:hover::before {
+  left: 100%;
 }
 
 .site-nav a:hover {
   background: var(--parchment-dark);
-  transform: translateY(-2px);
-  box-shadow: 3px 3px 6px var(--shadow-ink);
+  transform: translateY(-2px) perspective(500px) translateZ(5px);
+  box-shadow: 
+    4px 4px 8px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   border-color: var(--accent-red);
 }
 
@@ -126,52 +225,80 @@ body {
   background: var(--gold);
   border-color: var(--gold-dark);
   color: var(--ink);
-  box-shadow: inset 2px 2px 4px var(--shadow-ink);
+  box-shadow: 
+    inset 2px 2px 4px var(--shadow-ink),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.3);
+  transform: perspective(500px) translateZ(0);
 }
 
-/* 主內容區 - 羊皮紙效果 */
+/* 主內容區 - 真實羊皮紙效果 */
 .site-content {
-  background: var(--parchment-light);
+  background: 
+    /* 基礎羊皮紙 */
+    linear-gradient(135deg, var(--parchment-light) 0%, var(--parchment) 50%, var(--parchment-light) 100%),
+    /* 紙張纖維紋理 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 111, 71, 0.02) 1px,
+      rgba(139, 111, 71, 0.02) 2px
+    ),
+    /* 不規則老化效果 */
+    radial-gradient(ellipse at 10% 20%, rgba(139, 111, 71, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(139, 111, 71, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 97, 0.04) 0%, transparent 60%);
+  background-size: 100% 100%, 100% 4px, 100% 100%, 100% 100%, 100% 100%;
   padding: 3rem 4rem;
   border: 3px double var(--border-brown);
   border-radius: 8px;
   box-shadow: 
-    0 0 20px var(--shadow-ink),
-    inset 0 0 30px rgba(139, 111, 71, 0.1);
+    0 0 30px var(--shadow-ink),
+    inset 0 0 40px rgba(139, 111, 71, 0.1),
+    inset 0 0 60px rgba(201, 169, 97, 0.05);
   margin-bottom: 2rem;
   position: relative;
-  background-image: 
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(139, 111, 71, 0.03) 2px,
-      rgba(139, 111, 71, 0.03) 4px
-    );
-}
-
-/* 裝飾性邊角 */
-.site-content::before,
-.site-content::after {
-  content: '❦';
-  position: absolute;
-  color: var(--gold);
-  font-size: 1.5rem;
-  opacity: 0.5;
+  /* 3D 紙張效果 */
+  transform: perspective(2000px) rotateX(0.5deg);
+  transition: transform 0.3s ease;
+  /* 紙張質感濾鏡 */
+  filter: sepia(8%) contrast(99%) brightness(101%);
+  /* 混合模式增強質感 */
+  mix-blend-mode: normal;
 }
 
 .site-content::before {
-  top: 1rem;
-  left: 1rem;
+  content: '❦';
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  color: var(--gold);
+  font-size: 2rem;
+  opacity: 0.4;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  animation: fadeInOut 4s ease-in-out infinite;
+  transform: rotate(-15deg);
 }
 
 .site-content::after {
-  bottom: 1rem;
-  right: 1rem;
-  transform: rotate(180deg);
+  content: '❦';
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  color: var(--gold);
+  font-size: 2rem;
+  opacity: 0.4;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  animation: fadeInOut 4s ease-in-out infinite 2s;
+  transform: rotate(165deg);
 }
 
-/* 標題樣式 - 古書風格 */
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* 標題樣式 - 手寫書風格 */
 h1 {
   color: var(--accent-red);
   font-size: 2.5rem;
@@ -180,10 +307,21 @@ h1 {
   padding-bottom: 1rem;
   border-bottom: 3px double var(--border-brown);
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(139, 111, 71, 0.3);
-  letter-spacing: 2px;
+  text-shadow: 
+    3px 3px 6px rgba(139, 111, 71, 0.4),
+    1px 1px 2px rgba(0, 0, 0, 0.2);
+  letter-spacing: 3px;
   font-family: "Noto Serif TC", serif;
   position: relative;
+  /* 手寫字體特性 */
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern", "swsh";
+  /* 微妙的文字效果 */
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--ink-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(2px 2px 4px rgba(139, 111, 71, 0.3));
 }
 
 h1::before,
@@ -192,6 +330,18 @@ h1::after {
   color: var(--gold);
   margin: 0 1rem;
   font-size: 1.5rem;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  animation: sparkle 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+h1::after {
+  animation-delay: 1.5s;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
 }
 
 h2 {
@@ -201,11 +351,33 @@ h2 {
   margin-top: 2.5rem;
   margin-bottom: 1.5rem;
   padding-left: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   border-left: 5px solid var(--gold);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  background: linear-gradient(to right, rgba(201, 169, 97, 0.1), transparent);
+  background: 
+    linear-gradient(to right, rgba(201, 169, 97, 0.15), transparent),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(201, 169, 97, 0.05) 2px,
+      rgba(201, 169, 97, 0.05) 4px
+    );
   font-family: "Noto Serif TC", serif;
+  text-shadow: 2px 2px 4px rgba(139, 111, 71, 0.2);
+  position: relative;
+  font-variant-ligatures: common-ligatures;
+}
+
+h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  box-shadow: 2px 0 4px var(--shadow-ink);
 }
 
 h3 {
@@ -217,6 +389,8 @@ h3 {
   padding-left: 0.75rem;
   border-left: 3px solid var(--border-brown);
   font-family: "Noto Serif TC", serif;
+  text-shadow: 1px 1px 2px rgba(139, 111, 71, 0.15);
+  font-variant-ligatures: common-ligatures;
 }
 
 h4 {
@@ -226,15 +400,25 @@ h4 {
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
   font-family: "Noto Serif TC", serif;
+  font-variant-ligatures: common-ligatures;
 }
 
-/* 段落和文字 */
+/* 段落和文字 - 手寫風格 */
 p {
   margin-bottom: 1.25rem;
   color: var(--ink);
   text-align: justify;
   text-indent: 2em;
-  line-height: 2;
+  line-height: 2.2;
+  /* 手寫字體特性 */
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern";
+  /* 微妙的文字陰影模擬墨水效果 */
+  text-shadow: 0.5px 0.5px 1px rgba(139, 111, 71, 0.1);
+  /* 文字渲染優化 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* 首段不縮進 */
@@ -246,45 +430,108 @@ h4 + p {
   text-indent: 0;
 }
 
-/* 連結 */
+/* 連結 - 手寫書風格 */
 a {
   color: var(--accent-red);
   text-decoration: underline;
   text-decoration-color: var(--gold);
-  transition: all 0.3s;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: all 0.3s ease;
+  position: relative;
+  /* 手寫風格下劃線 */
+  text-decoration-skip-ink: none;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
 }
 
 a:hover {
   color: var(--gold-dark);
   text-decoration-color: var(--accent-red);
-  text-shadow: 1px 1px 2px rgba(139, 111, 71, 0.3);
+  text-shadow: 1px 1px 2px rgba(139, 111, 71, 0.2);
 }
 
-/* 列表 */
+a:hover::after {
+  width: 100%;
+}
+
+/* 列表 - 手寫風格 */
 ul, ol {
   margin-bottom: 1.5rem;
   padding-left: 2.5rem;
   color: var(--ink);
+  position: relative;
+}
+
+ul {
+  list-style: none;
+}
+
+ul li::before {
+  content: '▸';
+  color: var(--gold);
+  font-weight: bold;
+  position: absolute;
+  left: 1rem;
+  text-shadow: 1px 1px 2px var(--shadow-ink);
 }
 
 li {
   margin-bottom: 0.75rem;
-  line-height: 2;
+  line-height: 2.2;
+  font-variant-ligatures: common-ligatures;
+  text-shadow: 0.5px 0.5px 1px rgba(139, 111, 71, 0.1);
 }
 
 /* 表格 - 古書風格 */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 2rem 0;
   border: 2px solid var(--border-brown);
-  box-shadow: 4px 4px 8px var(--shadow-ink);
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(139, 111, 71, 0.05);
   background: var(--parchment);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+table::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 111, 71, 0.02) 1px,
+      rgba(139, 111, 71, 0.02) 2px
+    );
+  pointer-events: none;
+  z-index: 0;
 }
 
 thead {
-  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-dark) 100%);
   color: var(--ink);
+  position: relative;
+  z-index: 1;
 }
 
 th {
@@ -294,17 +541,22 @@ th {
   font-size: 1rem;
   border: 1px solid var(--border-brown);
   font-family: "Noto Serif TC", serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-variant-ligatures: common-ligatures;
 }
 
 td {
   padding: 0.875rem 1rem;
   border: 1px solid var(--border-light);
   border-top: 1px solid var(--border-brown);
+  position: relative;
+  z-index: 1;
 }
 
 tbody tr {
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   background: var(--parchment-light);
+  position: relative;
 }
 
 tbody tr:nth-child(even) {
@@ -312,8 +564,9 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-  background: var(--gold);
-  background-opacity: 0.3;
+  background: rgba(201, 169, 97, 0.2);
+  transform: scale(1.01);
+  box-shadow: inset 0 0 10px rgba(139, 111, 71, 0.1);
 }
 
 /* 引用塊 - 古書風格 */
@@ -323,11 +576,22 @@ blockquote {
   margin: 2rem 0;
   color: var(--ink-light);
   font-style: italic;
-  background: var(--parchment);
+  background: 
+    linear-gradient(90deg, var(--parchment) 0%, var(--parchment-light) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.02) 2px,
+      rgba(139, 111, 71, 0.02) 4px
+    );
   padding: 1.5rem 2rem;
   border-radius: 4px;
-  box-shadow: inset 4px 0 8px var(--shadow-ink);
+  box-shadow: 
+    inset 4px 0 8px var(--shadow-ink),
+    2px 2px 8px var(--shadow-parchment);
   position: relative;
+  font-variant-ligatures: common-ligatures;
 }
 
 blockquote::before {
@@ -337,21 +601,34 @@ blockquote::before {
   position: absolute;
   left: 0.5rem;
   top: -0.5rem;
-  opacity: 0.3;
+  opacity: 0.4;
   font-family: serif;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  line-height: 1;
 }
 
 /* 代碼塊 - 古書風格 */
 pre {
-  background: var(--ink);
+  background: 
+    linear-gradient(135deg, var(--ink) 0%, var(--ink-light) 100%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
   color: var(--parchment);
   padding: 1.5rem;
   border-radius: 4px;
   overflow-x: auto;
-  box-shadow: 4px 4px 8px var(--shadow-ink);
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
   margin: 1.5rem 0;
   border: 2px solid var(--border-brown);
   font-family: "Courier New", monospace;
+  position: relative;
 }
 
 code {
@@ -362,6 +639,7 @@ code {
   color: var(--accent-red);
   border: 1px solid var(--border-light);
   font-family: "Courier New", monospace;
+  box-shadow: inset 1px 1px 2px var(--shadow-parchment);
 }
 
 pre code {
@@ -369,12 +647,14 @@ pre code {
   padding: 0;
   color: inherit;
   border: none;
+  box-shadow: none;
 }
 
 /* 數學公式 */
 .MathJax {
   font-size: 1.1em;
   color: var(--ink);
+  filter: drop-shadow(1px 1px 2px rgba(139, 111, 71, 0.2));
 }
 
 /* 分隔線 - 裝飾性 */
@@ -384,6 +664,8 @@ hr {
   margin: 3rem 0;
   position: relative;
   text-align: center;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--border-brown), transparent);
 }
 
 hr::after {
@@ -396,18 +678,31 @@ hr::after {
   padding: 0 1rem;
   color: var(--gold);
   font-size: 1.5rem;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  animation: fadeInOut 4s ease-in-out infinite;
 }
 
 /* 卡片樣式 - 古書風格 */
 .card {
-  background: var(--parchment);
+  background: 
+    linear-gradient(135deg, var(--parchment) 0%, var(--parchment-light) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.02) 2px,
+      rgba(139, 111, 71, 0.02) 4px
+    );
   border-radius: 4px;
   padding: 1.5rem;
   margin: 1.5rem 0;
-  box-shadow: 4px 4px 8px var(--shadow-ink);
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(139, 111, 71, 0.05);
   border: 2px solid var(--border-brown);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
 }
 
 .card::before {
@@ -416,13 +711,34 @@ hr::after {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  box-shadow: 0 2px 4px var(--shadow-ink);
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 97, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::after {
+  opacity: 1;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 6px 6px 12px var(--shadow-ink);
+  transform: translateY(-3px) perspective(1000px) rotateX(1deg);
+  box-shadow: 
+    6px 6px 16px var(--shadow-ink),
+    inset 0 0 30px rgba(139, 111, 71, 0.08);
 }
 
 /* 按鈕樣式 - 古書風格 */
@@ -434,42 +750,65 @@ hr::after {
   border-radius: 4px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s;
-  box-shadow: 3px 3px 6px var(--shadow-ink);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    3px 3px 8px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   border: 2px solid var(--border-brown);
   font-family: "Noto Serif TC", serif;
+  position: relative;
+  overflow: hidden;
+  font-variant-ligatures: common-ligatures;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .btn:hover {
   background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
-  transform: translateY(-2px);
-  box-shadow: 5px 5px 10px var(--shadow-ink);
+  transform: translateY(-2px) perspective(500px) translateZ(5px);
+  box-shadow: 
+    5px 5px 12px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
   text-decoration: none;
   color: var(--ink);
 }
 
-/* 徽章/標籤 */
-.badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: var(--gold);
-  color: var(--ink);
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin: 0 0.25rem;
-  border: 1px solid var(--border-brown);
-}
-
 /* 頁腳 */
 .site-footer {
-  background: var(--parchment-dark);
+  background: 
+    linear-gradient(135deg, var(--parchment-dark) 0%, var(--parchment) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.03) 2px,
+      rgba(139, 111, 71, 0.03) 4px
+    );
   border-top: 3px double var(--border-brown);
   padding: 2rem 0;
   margin-top: 3rem;
   text-align: center;
   color: var(--ink-light);
-  box-shadow: 0 -4px 8px var(--shadow-ink);
+  box-shadow: 
+    0 -4px 12px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
 }
 
 .site-footer a {
@@ -494,6 +833,7 @@ hr::after {
 
   .site-content {
     padding: 2rem 1.5rem;
+    transform: none;
   }
 
   h1 {
@@ -517,6 +857,7 @@ hr::after {
 @media print {
   body {
     background: white;
+    filter: none;
   }
 
   .site-header {
@@ -526,5 +867,33 @@ hr::after {
   .site-content {
     box-shadow: none;
     border: 1px solid #ccc;
+    transform: none;
+    filter: none;
   }
+}
+
+/* 性能優化 */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 滾動條樣式 - 古書風格 */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--parchment-dark);
+  border-left: 1px solid var(--border-brown);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  border: 2px solid var(--parchment-dark);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold), var(--gold-light), var(--gold));
 }
