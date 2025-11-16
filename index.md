@@ -1,6 +1,7 @@
 ---
 layout: default
 title: 首頁
+permalink: /index.html
 lang: zh
 ---
 
