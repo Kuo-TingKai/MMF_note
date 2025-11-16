@@ -95,6 +95,12 @@
       borderRadius = `${30 + Math.random() * 40}% ${50 + Math.random() * 30}% ${40 + Math.random() * 30}% ${50 + Math.random() * 20}%`;
     }
     
+    // 游標熱點在 (4, 28)，游標圖標是 32x32
+    // 熱點相對於圖標中心的偏移：中心(16, 16) -> 熱點(4, 28) = 偏移(-12, 12)
+    // 所以墨水應該對齊到熱點位置，需要向下偏移 12px，向左偏移 12px
+    const cursorOffsetX = 4 - 16; // -12px (向左)
+    const cursorOffsetY = 28 - 16; // 12px (向下)
+    
     mark.style.cssText = `
       position: absolute;
       left: ${x}px;
@@ -103,11 +109,14 @@
       height: ${size}px;
       background: radial-gradient(circle, rgba(44, 24, 16, ${opacity}) 0%, rgba(44, 24, 16, ${opacity * 0.5}) 50%, transparent 100%);
       border-radius: ${borderRadius};
-      transform: translate(-50%, -50%) rotate(${rotation}deg);
+      transform: translate(calc(-50% + ${cursorOffsetX}px), calc(-50% + ${cursorOffsetY}px)) rotate(${rotation}deg);
       pointer-events: none;
       animation: inkFadeOut 2s ease-out forwards;
       filter: blur(0.5px);
     `;
+    
+    // 保存旋轉角度用於動畫
+    mark.style.setProperty('--rotation', rotation + 'deg');
     
     return mark;
   }
@@ -122,15 +131,15 @@
       @keyframes inkFadeOut {
         0% {
           opacity: 1;
-          transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(1);
+          transform: translate(calc(-50% + -12px), calc(-50% + 12px)) rotate(var(--rotation, 0deg)) scale(1);
         }
         50% {
           opacity: 0.5;
-          transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(0.9);
+          transform: translate(calc(-50% + -12px), calc(-50% + 12px)) rotate(var(--rotation, 0deg)) scale(0.9);
         }
         100% {
           opacity: 0;
-          transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(0.7);
+          transform: translate(calc(-50% + -12px), calc(-50% + 12px)) rotate(var(--rotation, 0deg)) scale(0.7);
         }
       }
       
