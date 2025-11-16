@@ -89,55 +89,65 @@
     const creaseCount = intensity === 'high' ? 6 : intensity === 'medium' ? 4 : 2;
     const tearCount = intensity === 'high' ? 3 : intensity === 'medium' ? 2 : 1;
 
-    // 創建皺摺線
+    // 創建皺摺線 - 短筆觸，像筆尖不小心劃過的痕跡
     for (let i = 0; i < creaseCount; i++) {
       const crease = document.createElement('div');
       crease.className = 'parchment-crease';
       
       const isVertical = Math.random() > 0.5;
-      const position = Math.random() * 100;
-      const length = 30 + Math.random() * 40; // 30-70%
-      const startPos = position - length / 2;
+      // 非常短的長度，像意外劃過的痕跡（2-6%）
+      const length = 2 + Math.random() * 4;
+      const position = 15 + Math.random() * 70; // 避免太靠近邊緣
       
       if (isVertical) {
+        // 垂直短筆觸 - 單筆觸
+        const x = 15 + Math.random() * 70;
+        const rotation = -0.5 + Math.random() * 1; // 非常輕微的傾斜
+        const opacity = 0.4 + Math.random() * 0.3; // 0.4-0.7
+        
         crease.style.cssText = `
           position: absolute;
-          left: ${startPos}%;
-          top: ${10 + Math.random() * 20}%;
-          width: 2px;
+          left: ${x}%;
+          top: ${position}%;
+          width: 0.5px;
           height: ${length}%;
           background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(139, 111, 71, 0.15) 20%,
-            rgba(139, 111, 71, 0.25) 50%,
-            rgba(139, 111, 71, 0.15) 80%,
+            rgba(139, 111, 71, ${opacity * 0.5}) 5%,
+            rgba(139, 111, 71, ${opacity}) 30%,
+            rgba(139, 111, 71, ${opacity}) 70%,
+            rgba(139, 111, 71, ${opacity * 0.5}) 95%,
             transparent 100%
           );
-          box-shadow: 
-            -1px 0 2px rgba(44, 24, 16, 0.2),
-            1px 0 2px rgba(44, 24, 16, 0.2);
-          transform: rotate(${-2 + Math.random() * 4}deg);
+          box-shadow: 0 0 0.5px rgba(44, 24, 16, 0.1);
+          transform: rotate(${rotation}deg);
+          opacity: ${opacity};
         `;
       } else {
+        // 水平短筆觸 - 單筆觸
+        const y = 15 + Math.random() * 70;
+        const rotation = -0.5 + Math.random() * 1; // 非常輕微的傾斜
+        const opacity = 0.4 + Math.random() * 0.3; // 0.4-0.7
+        
         crease.style.cssText = `
           position: absolute;
-          left: ${10 + Math.random() * 20}%;
-          top: ${startPos}%;
+          left: ${position}%;
+          top: ${y}%;
           width: ${length}%;
-          height: 2px;
+          height: 0.5px;
           background: linear-gradient(
             to right,
             transparent 0%,
-            rgba(139, 111, 71, 0.15) 20%,
-            rgba(139, 111, 71, 0.25) 50%,
-            rgba(139, 111, 71, 0.15) 80%,
+            rgba(139, 111, 71, ${opacity * 0.5}) 5%,
+            rgba(139, 111, 71, ${opacity}) 30%,
+            rgba(139, 111, 71, ${opacity}) 70%,
+            rgba(139, 111, 71, ${opacity * 0.5}) 95%,
             transparent 100%
           );
-          box-shadow: 
-            0 -1px 2px rgba(44, 24, 16, 0.2),
-            0 1px 2px rgba(44, 24, 16, 0.2);
-          transform: rotate(${-2 + Math.random() * 4}deg);
+          box-shadow: 0 0 0.5px rgba(44, 24, 16, 0.1);
+          transform: rotate(${rotation}deg);
+          opacity: ${opacity};
         `;
       }
       
