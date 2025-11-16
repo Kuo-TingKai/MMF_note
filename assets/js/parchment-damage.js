@@ -217,67 +217,141 @@
 
     // 創建皺摺線 - 非常短的筆觸，像筆尖不小心劃過的痕跡
     for (let i = 0; i < creaseCount; i++) {
-      const crease = document.createElement('div');
-      crease.className = 'parchment-crease';
-      
       const isVertical = Math.random() > 0.5;
       // 非常短的長度，像意外劃過的痕跡（0.5-2%）
-      const length = 0.5 + Math.random() * 1.5;
+      const mainLength = 0.5 + Math.random() * 1.5;
       const position = 15 + Math.random() * 70; // 避免太靠近邊緣
       
+      // 主筆觸的位置和參數
+      let mainX, mainY, mainRotation, mainOpacity;
+      
       if (isVertical) {
-        // 垂直短筆觸 - 單筆觸，更細更短
-        const x = 15 + Math.random() * 70;
-        const rotation = -0.3 + Math.random() * 0.6; // 非常輕微的傾斜
-        const opacity = 0.6 + Math.random() * 0.3; // 0.6-0.9，更深
-        
-        crease.style.cssText = `
+        // 垂直短筆觸
+        mainX = 15 + Math.random() * 70;
+        mainY = position;
+        mainRotation = -0.3 + Math.random() * 0.6;
+        mainOpacity = 0.6 + Math.random() * 0.3;
+      } else {
+        // 水平短筆觸
+        mainX = position;
+        mainY = 15 + Math.random() * 70;
+        mainRotation = -0.3 + Math.random() * 0.6;
+        mainOpacity = 0.6 + Math.random() * 0.3;
+      }
+      
+      // 創建主筆觸
+      const mainCrease = document.createElement('div');
+      mainCrease.className = 'parchment-crease';
+      
+      if (isVertical) {
+        mainCrease.style.cssText = `
           position: absolute;
-          left: ${x}%;
-          top: ${position}%;
+          left: ${mainX}%;
+          top: ${mainY}%;
           width: 0.3px;
-          height: ${length}%;
+          height: ${mainLength}%;
           background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(44, 24, 16, ${opacity * 0.6}) 10%,
-            rgba(44, 24, 16, ${opacity}) 40%,
-            rgba(44, 24, 16, ${opacity}) 60%,
-            rgba(44, 24, 16, ${opacity * 0.6}) 90%,
+            rgba(44, 24, 16, ${mainOpacity * 0.6}) 10%,
+            rgba(44, 24, 16, ${mainOpacity}) 40%,
+            rgba(44, 24, 16, ${mainOpacity}) 60%,
+            rgba(44, 24, 16, ${mainOpacity * 0.6}) 90%,
             transparent 100%
           );
           box-shadow: 0 0 0.3px rgba(44, 24, 16, 0.2);
-          transform: rotate(${rotation}deg);
+          transform: rotate(${mainRotation}deg);
           opacity: 1;
         `;
       } else {
-        // 水平短筆觸 - 單筆觸，更細更短
-        const y = 15 + Math.random() * 70;
-        const rotation = -0.3 + Math.random() * 0.6; // 非常輕微的傾斜
-        const opacity = 0.6 + Math.random() * 0.3; // 0.6-0.9，更深
-        
-        crease.style.cssText = `
+        mainCrease.style.cssText = `
           position: absolute;
-          left: ${position}%;
-          top: ${y}%;
-          width: ${length}%;
+          left: ${mainX}%;
+          top: ${mainY}%;
+          width: ${mainLength}%;
           height: 0.3px;
           background: linear-gradient(
             to right,
             transparent 0%,
-            rgba(44, 24, 16, ${opacity * 0.6}) 10%,
-            rgba(44, 24, 16, ${opacity}) 40%,
-            rgba(44, 24, 16, ${opacity}) 60%,
-            rgba(44, 24, 16, ${opacity * 0.6}) 90%,
+            rgba(44, 24, 16, ${mainOpacity * 0.6}) 10%,
+            rgba(44, 24, 16, ${mainOpacity}) 40%,
+            rgba(44, 24, 16, ${mainOpacity}) 60%,
+            rgba(44, 24, 16, ${mainOpacity * 0.6}) 90%,
             transparent 100%
           );
           box-shadow: 0 0 0.3px rgba(44, 24, 16, 0.2);
-          transform: rotate(${rotation}deg);
+          transform: rotate(${mainRotation}deg);
           opacity: 1;
         `;
       }
       
-      damageContainer.appendChild(crease);
+      damageContainer.appendChild(mainCrease);
+      
+      // 在主筆觸周圍生成 2-4 條更短的隨機線條
+      const nearbyCount = 2 + Math.floor(Math.random() * 3); // 2-4 條
+      
+      for (let j = 0; j < nearbyCount; j++) {
+        const nearbyCrease = document.createElement('div');
+        nearbyCrease.className = 'parchment-crease';
+        
+        // 隨機偏移距離（很近，1-3%）
+        const offsetDistance = 0.3 + Math.random() * 0.5;
+        const offsetAngle = Math.random() * Math.PI * 2;
+        const offsetX = Math.cos(offsetAngle) * offsetDistance;
+        const offsetY = Math.sin(offsetAngle) * offsetDistance;
+        
+        // 更短的長度（主筆觸的 30-70%）
+        const nearbyLength = mainLength * (0.3 + Math.random() * 0.4);
+        
+        // 隨機方向（可以是任意角度）
+        const nearbyRotation = Math.random() * 360;
+        const nearbyOpacity = mainOpacity * (0.5 + Math.random() * 0.3); // 稍淺
+        
+        // 判斷是水平還是垂直（基於旋轉角度）
+        const isNearbyVertical = Math.abs(Math.sin(nearbyRotation * Math.PI / 180)) > Math.abs(Math.cos(nearbyRotation * Math.PI / 180));
+        
+        if (isNearbyVertical) {
+          nearbyCrease.style.cssText = `
+            position: absolute;
+            left: ${mainX + offsetX}%;
+            top: ${mainY + offsetY}%;
+            width: 0.25px;
+            height: ${nearbyLength}%;
+            background: linear-gradient(
+              to bottom,
+              transparent 0%,
+              rgba(44, 24, 16, ${nearbyOpacity * 0.5}) 15%,
+              rgba(44, 24, 16, ${nearbyOpacity}) 50%,
+              rgba(44, 24, 16, ${nearbyOpacity * 0.5}) 85%,
+              transparent 100%
+            );
+            box-shadow: 0 0 0.2px rgba(44, 24, 16, 0.15);
+            transform: rotate(${nearbyRotation}deg);
+            opacity: 1;
+          `;
+        } else {
+          nearbyCrease.style.cssText = `
+            position: absolute;
+            left: ${mainX + offsetX}%;
+            top: ${mainY + offsetY}%;
+            width: ${nearbyLength}%;
+            height: 0.25px;
+            background: linear-gradient(
+              to right,
+              transparent 0%,
+              rgba(44, 24, 16, ${nearbyOpacity * 0.5}) 15%,
+              rgba(44, 24, 16, ${nearbyOpacity}) 50%,
+              rgba(44, 24, 16, ${nearbyOpacity * 0.5}) 85%,
+              transparent 100%
+            );
+            box-shadow: 0 0 0.2px rgba(44, 24, 16, 0.15);
+            transform: rotate(${nearbyRotation}deg);
+            opacity: 1;
+          `;
+        }
+        
+        damageContainer.appendChild(nearbyCrease);
+      }
     }
 
     // 創建邊角破損
