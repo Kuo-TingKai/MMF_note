@@ -1,0 +1,1281 @@
+/* 中世紀手寫書羊皮紙風格 - 使用先進網頁渲染技術 */
+
+:root {
+  --parchment: #f4e8d0;
+  --parchment-dark: #e8d5b7;
+  --parchment-light: #faf7f0;
+  --parchment-aged: #e6d4b3;
+  --ink: #2c1810;
+  --ink-light: #4a3428;
+  --ink-faded: #6b5b4f;
+  --gold: #c9a961;
+  --gold-dark: #8b6914;
+  --gold-light: #e6d4a8;
+  --border-brown: #8b6f47;
+  --border-light: #d4c4a8;
+  --accent-red: #8b4513;
+  --shadow-ink: rgba(44, 24, 16, 0.4);
+  --shadow-parchment: rgba(139, 111, 71, 0.2);
+}
+
+/* 全局樣式 - 羊皮紙質感 */
+body {
+  font-family: "Noto Serif TC", "Noto Serif SC", "Times New Roman", serif;
+  line-height: 1.9;
+  color: var(--ink);
+  background: 
+    /* 基礎羊皮紙顏色 */
+    linear-gradient(135deg, var(--parchment-aged) 0%, var(--parchment) 25%, var(--parchment-light) 50%, var(--parchment) 75%, var(--parchment-aged) 100%),
+    /* 紙張紋理 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.03) 2px,
+      rgba(139, 111, 71, 0.03) 4px
+    ),
+    /* 不規則斑點 */
+    radial-gradient(circle at 20% 30%, rgba(139, 111, 71, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(139, 111, 71, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.03) 0%, transparent 50%);
+  background-size: 100% 100%, 100% 8px, 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  /* 添加微妙的紙張質感濾鏡 */
+  filter: sepia(5%) contrast(98%) brightness(102%);
+  /* 確保內容在裝飾之上 */
+  z-index: 1;
+}
+
+/* 紙張老化效果 - 使用偽元素 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    /* 不規則老化斑點 */
+    radial-gradient(ellipse at 15% 20%, rgba(139, 111, 71, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 80%, rgba(139, 111, 71, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 10%, rgba(201, 169, 97, 0.05) 0%, transparent 30%),
+    /* 細微的紙張纖維 */
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 111, 71, 0.02) 1px,
+      rgba(139, 111, 71, 0.02) 2px
+    );
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+/* 容器 */
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 3;
+}
+
+/* 導航欄 - 暗黑破壞神風格 */
+.site-header {
+  background: 
+    /* 深色石質紋理背景 */
+    linear-gradient(135deg, 
+      rgba(44, 24, 16, 0.95) 0%, 
+      rgba(60, 40, 30, 0.95) 25%,
+      rgba(44, 24, 16, 0.95) 50%,
+      rgba(60, 40, 30, 0.95) 75%,
+      rgba(44, 24, 16, 0.95) 100%
+    ),
+    /* 石質紋理 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 4px
+    ),
+    /* 金屬光澤 */
+    linear-gradient(
+      180deg,
+      rgba(139, 111, 71, 0.2) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgba(139, 111, 71, 0.15) 100%
+    );
+  color: var(--gold-light);
+  padding: 1.5rem 0;
+  border-top: 3px solid rgba(139, 111, 71, 0.8);
+  border-bottom: 3px solid rgba(139, 111, 71, 0.8);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(139, 111, 71, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(139, 111, 71, 0.2);
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 100;
+  /* 3D 效果 */
+  transform: perspective(1000px) rotateX(0deg);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.site-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(139, 111, 71, 0.6) 10%,
+    rgba(201, 169, 97, 0.8) 50%,
+    rgba(139, 111, 71, 0.6) 90%,
+    transparent 100%
+  );
+  box-shadow: 
+    0 2px 8px rgba(139, 111, 71, 0.4),
+    inset 0 1px 2px rgba(201, 169, 97, 0.3);
+}
+
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(139, 111, 71, 0.6) 10%,
+    rgba(201, 169, 97, 0.8) 50%,
+    rgba(139, 111, 71, 0.6) 90%,
+    transparent 100%
+  );
+  box-shadow: 
+    0 -2px 8px rgba(139, 111, 71, 0.4),
+    inset 0 -1px 2px rgba(201, 169, 97, 0.3);
+}
+
+.site-header .wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.site-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--gold-light);
+  text-decoration: none;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(201, 169, 97, 0.5),
+    1px 1px 2px rgba(139, 111, 71, 0.6);
+  letter-spacing: 2px;
+  /* 古樸字體 - 使用多個備選字體 */
+  font-family: "ZCOOL XiaoWei", "Ma Shan Zheng", "Noto Serif TC", serif;
+  position: relative;
+  transition: all 0.3s ease;
+  z-index: 2;
+  /* 手寫效果 */
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern";
+  /* 添加輕微的破損效果 */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  /* 添加輕微的破損紋理 */
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(201, 169, 97, 0.5),
+    1px 1px 2px rgba(139, 111, 71, 0.6),
+    /* 輕微的破損陰影 */
+    -0.5px -0.5px 0 rgba(139, 111, 71, 0.1),
+    0.5px 0.5px 0 rgba(139, 111, 71, 0.1);
+}
+
+/* 英文版標題 - 精靈文字體風格 */
+.lang-en .site-title {
+  font-family: "Cinzel Decorative", "Uncial Antiqua", "MedievalSharp", fantasy;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  /* 精靈文風格效果 */
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(201, 169, 97, 0.6),
+    1px 1px 3px rgba(139, 111, 71, 0.7),
+    /* 精靈文特有的光澤效果 */
+    0 0 20px rgba(244, 208, 63, 0.3);
+}
+
+.site-title:hover {
+  color: #f4d03f;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.9),
+    0 0 12px rgba(244, 208, 63, 0.7),
+    1px 1px 2px rgba(201, 169, 97, 0.8);
+  transform: translateY(-1px);
+}
+
+.site-nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.site-nav a {
+  color: var(--gold-light);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border: 2px solid rgba(139, 111, 71, 0.8);
+  border-radius: 4px;
+  background: linear-gradient(
+    180deg,
+    rgba(60, 40, 30, 0.9) 0%,
+    rgba(44, 24, 16, 0.9) 100%
+  );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    2px 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(139, 111, 71, 0.3),
+    0 0 10px rgba(139, 111, 71, 0.2);
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 4px rgba(201, 169, 97, 0.3);
+  /* 3D 按鈕效果 */
+  transform: perspective(500px) translateZ(0);
+}
+
+/* 語言切換按鈕 */
+.language-switcher {
+  color: var(--gold-light);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border: 2px solid rgba(139, 111, 71, 0.8);
+  border-radius: 4px;
+  background: linear-gradient(
+    180deg,
+    rgba(60, 40, 30, 0.9) 0%,
+    rgba(44, 24, 16, 0.9) 100%
+  );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    2px 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(139, 111, 71, 0.3),
+    0 0 10px rgba(139, 111, 71, 0.2);
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 4px rgba(201, 169, 97, 0.3);
+  cursor: pointer;
+  font-family: inherit;
+  /* 3D 按鈕效果 */
+  transform: perspective(500px) translateZ(0);
+}
+
+.language-switcher::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.language-switcher:hover::before {
+  left: 100%;
+}
+
+.language-switcher:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(80, 60, 50, 0.95) 0%,
+    rgba(60, 40, 30, 0.95) 100%
+  );
+  border-color: rgba(201, 169, 97, 0.9);
+  color: #f4d03f;
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 2px rgba(201, 169, 97, 0.3),
+    0 0 12px rgba(201, 169, 97, 0.3);
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 6px rgba(244, 208, 63, 0.5);
+  transform: perspective(500px) translateZ(0);
+}
+
+.site-nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.site-nav a:hover::before {
+  left: 100%;
+}
+
+.site-nav a:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(80, 60, 50, 0.95) 0%,
+    rgba(60, 40, 30, 0.95) 100%
+  );
+  transform: translateY(-2px) perspective(500px) translateZ(5px);
+  box-shadow: 
+    4px 4px 12px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(201, 169, 97, 0.4),
+    0 0 15px rgba(201, 169, 97, 0.4);
+  border-color: rgba(201, 169, 97, 0.9);
+  color: #f4d03f;
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 8px rgba(244, 208, 63, 0.6);
+}
+
+.site-nav a.active {
+  background: linear-gradient(
+    180deg,
+    rgba(139, 111, 71, 0.4) 0%,
+    rgba(101, 67, 33, 0.4) 100%
+  );
+  border-color: rgba(201, 169, 97, 0.9);
+  color: #f4d03f;
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 2px rgba(201, 169, 97, 0.3),
+    0 0 12px rgba(201, 169, 97, 0.3);
+  text-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 6px rgba(244, 208, 63, 0.5);
+  transform: perspective(500px) translateZ(0);
+}
+
+/* 主內容區 - 古老羊皮紙卷軸效果 */
+.site-content {
+  background: 
+    /* 基礎羊皮紙顏色 - 更深的色調模擬老化 */
+    linear-gradient(135deg, 
+      var(--parchment-aged) 0%, 
+      var(--parchment-dark) 15%, 
+      var(--parchment) 30%,
+      var(--parchment-light) 50%,
+      var(--parchment) 70%,
+      var(--parchment-dark) 85%,
+      var(--parchment-aged) 100%
+    ),
+    /* 紙張纖維紋理 - 更明顯 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 111, 71, 0.04) 1px,
+      rgba(139, 111, 71, 0.04) 2px
+    ),
+    /* 垂直纖維紋理 */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.02) 2px,
+      rgba(139, 111, 71, 0.02) 4px
+    ),
+    /* 大面積污漬和老化斑點 */
+    radial-gradient(ellipse 400px 200px at 15% 25%, rgba(139, 111, 71, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 300px 150px at 85% 75%, rgba(139, 111, 71, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 250px 300px at 50% 10%, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 200px 180px at 20% 80%, rgba(139, 111, 71, 0.09) 0%, transparent 50%),
+    radial-gradient(ellipse 350px 250px at 80% 30%, rgba(139, 111, 71, 0.11) 0%, transparent 55%),
+    /* 小污漬點 */
+    radial-gradient(circle 15px at 25% 40%, rgba(139, 111, 71, 0.15) 0%, transparent 70%),
+    radial-gradient(circle 12px at 70% 60%, rgba(139, 111, 71, 0.12) 0%, transparent 70%),
+    radial-gradient(circle 18px at 45% 85%, rgba(139, 111, 71, 0.14) 0%, transparent 70%),
+    radial-gradient(circle 10px at 90% 20%, rgba(139, 111, 71, 0.13) 0%, transparent 70%),
+    radial-gradient(circle 14px at 10% 70%, rgba(139, 111, 71, 0.11) 0%, transparent 70%),
+    /* 邊緣老化效果 */
+    linear-gradient(to right, rgba(139, 111, 71, 0.15) 0%, transparent 5%, transparent 95%, rgba(139, 111, 71, 0.15) 100%),
+    linear-gradient(to bottom, rgba(139, 111, 71, 0.12) 0%, transparent 3%, transparent 97%, rgba(139, 111, 71, 0.12) 100%);
+  background-size: 
+    100% 100%, 
+    100% 4px, 
+    8px 100%,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    100% 100%, 100% 100%;
+  padding: 3rem 4rem;
+  /* 邊框將通過偽元素動態生成，以跟隨破損軌跡 */
+  border: none;
+  /* 不規則邊角 - 模擬破損和皺摺 */
+  border-radius: 
+    12px 8px 15px 10px  /* 左上角 */
+    10px 12px 8px 15px  /* 右上角 */
+    15px 10px 12px 8px  /* 右下角 */
+    8px 15px 10px 12px; /* 左下角 */
+  /* 使用簡化的 clip-path 創建不規則邊緣（通過 JavaScript 動態生成更複雜的效果） */
+  box-shadow: 
+    0 0 30px var(--shadow-ink),
+    inset 0 0 40px rgba(139, 111, 71, 0.15),
+    inset 0 0 60px rgba(201, 169, 97, 0.08),
+    /* 卷軸邊緣陰影 */
+    inset -20px 0 30px rgba(139, 111, 71, 0.1),
+    inset 20px 0 30px rgba(139, 111, 71, 0.1),
+    /* 皺摺陰影效果 */
+    -2px -2px 4px rgba(44, 24, 16, 0.2),
+    2px -2px 4px rgba(44, 24, 16, 0.2),
+    -2px 2px 4px rgba(44, 24, 16, 0.2),
+    2px 2px 4px rgba(44, 24, 16, 0.2);
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 3;
+  /* 3D 紙張效果 */
+  transform: perspective(2000px) rotateX(0.5deg);
+  transition: transform 0.3s ease;
+  /* 紙張質感濾鏡 - 更強的老化效果 */
+  filter: sepia(12%) contrast(97%) brightness(98%) saturate(90%);
+  /* 混合模式增強質感 */
+  mix-blend-mode: normal;
+  /* 卷軸質感 */
+  overflow: visible;
+  /* 添加額外的質感層 */
+  position: relative;
+  /* 允許破洞效果 */
+  isolation: isolate;
+}
+
+/* 為內容區域添加額外的污漬層 */
+.site-content > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 確保文字內容在破洞之上 */
+.site-content h1,
+.site-content h2,
+.site-content h3,
+.site-content h4,
+.site-content p,
+.site-content li,
+.site-content td,
+.site-content th {
+  position: relative;
+  z-index: 3;
+}
+
+/* 英文版內容 - 手寫體字體 */
+.lang-en .site-content {
+  font-family: "Kalam", "Caveat", "Dancing Script", cursive;
+}
+
+.lang-en .site-content h1,
+.lang-en .site-content h2,
+.lang-en .site-content h3,
+.lang-en .site-content h4 {
+  font-family: "Cinzel Decorative", "Uncial Antiqua", "MedievalSharp", fantasy;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.lang-en .site-content p,
+.lang-en .site-content li,
+.lang-en .site-content td,
+.lang-en .site-content th,
+.lang-en .site-content blockquote {
+  font-family: "Kalam", "Caveat", "Dancing Script", cursive;
+  font-weight: 400;
+  line-height: 1.8;
+  /* 手寫體特有的不規則效果 */
+  letter-spacing: 0.5px;
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern";
+}
+
+.lang-en .site-content code,
+.lang-en .site-content pre {
+  font-family: "Kalam", monospace;
+  font-weight: 400;
+}
+
+/* 卷軸左側裝飾 */
+.site-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: 
+    /* 卷軸邊緣質感 */
+    linear-gradient(to right, 
+      rgba(139, 111, 71, 0.3) 0%,
+      rgba(139, 111, 71, 0.2) 30%,
+      rgba(139, 111, 71, 0.1) 60%,
+      transparent 100%
+    ),
+    /* 邊緣污漬 */
+    radial-gradient(ellipse 20px 40px at 10px 20%, rgba(139, 111, 71, 0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 15px 50px at 8px 60%, rgba(139, 111, 71, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 18px 45px at 12px 80%, rgba(139, 111, 71, 0.22) 0%, transparent 58%);
+  pointer-events: none;
+  z-index: 1;
+  border-right: 2px solid rgba(139, 111, 71, 0.3);
+  /* 左側邊緣破損效果 */
+  clip-path: polygon(
+    0% 0%, 100% 2%, 0% 5%, 100% 8%, 0% 12%, 100% 15%, 0% 20%,
+    100% 25%, 0% 30%, 100% 35%, 0% 40%, 100% 45%, 0% 50%,
+    100% 55%, 0% 60%, 100% 65%, 0% 70%, 100% 75%, 0% 80%,
+    100% 85%, 0% 88%, 100% 92%, 0% 95%, 100% 98%, 0% 100%
+  );
+}
+
+/* 卷軸右側裝飾 */
+.site-content::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 100%;
+  background: 
+    /* 卷軸邊緣質感 */
+    linear-gradient(to left, 
+      rgba(139, 111, 71, 0.3) 0%,
+      rgba(139, 111, 71, 0.2) 30%,
+      rgba(139, 111, 71, 0.1) 60%,
+      transparent 100%
+    ),
+    /* 邊緣污漬 */
+    radial-gradient(ellipse 20px 40px at 20px 30%, rgba(139, 111, 71, 0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 15px 50px at 22px 50%, rgba(139, 111, 71, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 18px 45px at 18px 70%, rgba(139, 111, 71, 0.22) 0%, transparent 58%);
+  pointer-events: none;
+  z-index: 1;
+  border-left: 2px solid rgba(139, 111, 71, 0.3);
+  /* 右側邊緣破損效果 */
+  clip-path: polygon(
+    0% 0%, 100% 2%, 0% 5%, 100% 8%, 0% 12%, 100% 15%, 0% 20%,
+    100% 25%, 0% 30%, 100% 35%, 0% 40%, 100% 45%, 0% 50%,
+    100% 55%, 0% 60%, 100% 65%, 0% 70%, 100% 75%, 0% 80%,
+    100% 85%, 0% 88%, 100% 92%, 0% 95%, 100% 98%, 0% 100%
+  );
+}
+
+/* 皺摺和破損效果容器 */
+.parchment-damage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* 破洞效果容器 */
+.parchment-holes-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+/* 破洞元素 - 使用偽元素創建真正的透明破洞 */
+.parchment-hole {
+  position: absolute;
+  pointer-events: none;
+  /* 創建真正的透明破洞 */
+  background: transparent;
+  /* 使用偽元素創建邊緣效果 */
+}
+
+.parchment-hole::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    transparent 30%,
+    rgba(139, 111, 71, 0.15) 50%,
+    rgba(139, 111, 71, 0.08) 70%,
+    transparent 100%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* 破洞邊緣效果 */
+.parchment-hole-edge {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* 為卡片也添加皺摺效果 */
+.card {
+  /* 不規則邊角 */
+  border-radius: 
+    8px 6px 10px 7px
+    7px 9px 6px 8px
+    9px 7px 8px 6px
+    6px 8px 7px 9px;
+  /* 破損效果通過 JavaScript 動態生成 */
+  /* 皺摺陰影 */
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(139, 111, 71, 0.05),
+    -1px -1px 3px rgba(44, 24, 16, 0.15),
+    1px -1px 3px rgba(44, 24, 16, 0.15),
+    -1px 1px 3px rgba(44, 24, 16, 0.15),
+    1px 1px 3px rgba(44, 24, 16, 0.15);
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* 標題樣式 - 手寫書風格 */
+h1 {
+  color: var(--accent-red);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px double var(--border-brown);
+  text-align: center;
+  text-shadow: 
+    3px 3px 6px rgba(139, 111, 71, 0.4),
+    1px 1px 2px rgba(0, 0, 0, 0.2);
+  letter-spacing: 3px;
+  font-family: "Noto Serif TC", serif;
+  position: relative;
+  /* 手寫字體特性 */
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern", "swsh";
+  /* 微妙的文字效果 */
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--ink-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(2px 2px 4px rgba(139, 111, 71, 0.3));
+}
+
+h1::before,
+h1::after {
+  content: '✦';
+  color: var(--gold);
+  margin: 0 1rem;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  animation: sparkle 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+h1::after {
+  animation-delay: 1.5s;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+h2 {
+  color: var(--accent-red);
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-left: 5px solid var(--gold);
+  background: 
+    linear-gradient(to right, rgba(201, 169, 97, 0.15), transparent),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(201, 169, 97, 0.05) 2px,
+      rgba(201, 169, 97, 0.05) 4px
+    );
+  font-family: "Noto Serif TC", serif;
+  text-shadow: 2px 2px 4px rgba(139, 111, 71, 0.2);
+  position: relative;
+  font-variant-ligatures: common-ligatures;
+}
+
+h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  box-shadow: 2px 0 4px var(--shadow-ink);
+}
+
+h3 {
+  color: var(--ink-light);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--border-brown);
+  font-family: "Noto Serif TC", serif;
+  text-shadow: 1px 1px 2px rgba(139, 111, 71, 0.15);
+  font-variant-ligatures: common-ligatures;
+}
+
+h4 {
+  color: var(--ink);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-family: "Noto Serif TC", serif;
+  font-variant-ligatures: common-ligatures;
+}
+
+/* 段落和文字 - 手寫風格 */
+p {
+  margin-bottom: 1.25rem;
+  color: var(--ink);
+  text-align: justify;
+  text-indent: 2em;
+  line-height: 2.2;
+  /* 手寫字體特性 */
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga", "kern";
+  /* 微妙的文字陰影模擬墨水效果 */
+  text-shadow: 0.5px 0.5px 1px rgba(139, 111, 71, 0.1);
+  /* 文字渲染優化 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 首段不縮進 */
+p:first-of-type,
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p {
+  text-indent: 0;
+}
+
+/* 連結 - 手寫書風格 */
+a {
+  color: var(--accent-red);
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: all 0.3s ease;
+  position: relative;
+  /* 手寫風格下劃線 */
+  text-decoration-skip-ink: none;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+a:hover {
+  color: var(--gold-dark);
+  text-decoration-color: var(--accent-red);
+  text-shadow: 1px 1px 2px rgba(139, 111, 71, 0.2);
+}
+
+a:hover::after {
+  width: 100%;
+}
+
+/* 列表 - 手寫風格 */
+ul, ol {
+  margin-bottom: 1.5rem;
+  padding-left: 2.5rem;
+  color: var(--ink);
+  position: relative;
+}
+
+ul {
+  list-style: none;
+}
+
+ul li::before {
+  content: '▸';
+  color: var(--gold);
+  font-weight: bold;
+  position: absolute;
+  left: 1rem;
+  text-shadow: 1px 1px 2px var(--shadow-ink);
+}
+
+li {
+  margin-bottom: 0.75rem;
+  line-height: 2.2;
+  font-variant-ligatures: common-ligatures;
+  text-shadow: 0.5px 0.5px 1px rgba(139, 111, 71, 0.1);
+}
+
+/* 表格 - 古書風格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 2rem 0;
+  border: 2px solid var(--border-brown);
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(139, 111, 71, 0.05);
+  background: var(--parchment);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+table::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 111, 71, 0.02) 1px,
+      rgba(139, 111, 71, 0.02) 2px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+thead {
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  color: var(--ink);
+  position: relative;
+  z-index: 1;
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 1px solid var(--border-brown);
+  font-family: "Noto Serif TC", serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-variant-ligatures: common-ligatures;
+}
+
+td {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border-light);
+  border-top: 1px solid var(--border-brown);
+  position: relative;
+  z-index: 1;
+}
+
+tbody tr {
+  transition: all 0.3s ease;
+  background: var(--parchment-light);
+  position: relative;
+}
+
+tbody tr:nth-child(even) {
+  background: var(--parchment);
+}
+
+tbody tr:hover {
+  background: rgba(201, 169, 97, 0.2);
+  transform: scale(1.01);
+  box-shadow: inset 0 0 10px rgba(139, 111, 71, 0.1);
+}
+
+/* 引用塊 - 古書風格 */
+blockquote {
+  border-left: 5px solid var(--gold);
+  padding-left: 2rem;
+  margin: 2rem 0;
+  color: var(--ink-light);
+  font-style: italic;
+  background: 
+    linear-gradient(90deg, var(--parchment) 0%, var(--parchment-light) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.02) 2px,
+      rgba(139, 111, 71, 0.02) 4px
+    );
+  padding: 1.5rem 2rem;
+  border-radius: 4px;
+  box-shadow: 
+    inset 4px 0 8px var(--shadow-ink),
+    2px 2px 8px var(--shadow-parchment);
+  position: relative;
+  font-variant-ligatures: common-ligatures;
+}
+
+blockquote::before {
+  content: '"';
+  font-size: 4rem;
+  color: var(--gold);
+  position: absolute;
+  left: 0.5rem;
+  top: -0.5rem;
+  opacity: 0.4;
+  font-family: serif;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  line-height: 1;
+}
+
+/* 代碼塊 - 古書風格 */
+pre {
+  background: 
+    linear-gradient(135deg, var(--ink) 0%, var(--ink-light) 100%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
+  color: var(--parchment);
+  padding: 1.5rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
+  margin: 1.5rem 0;
+  border: 2px solid var(--border-brown);
+  font-family: "Courier New", monospace;
+  position: relative;
+}
+
+code {
+  background: var(--parchment-dark);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: var(--accent-red);
+  border: 1px solid var(--border-light);
+  font-family: "Courier New", monospace;
+  box-shadow: inset 1px 1px 2px var(--shadow-parchment);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  border: none;
+  box-shadow: none;
+}
+
+/* 數學公式 */
+.MathJax {
+  font-size: 1.1em;
+  color: var(--ink);
+  filter: drop-shadow(1px 1px 2px rgba(139, 111, 71, 0.2));
+}
+
+/* 分隔線 - 裝飾性 */
+hr {
+  border: none;
+  border-top: 3px double var(--border-brown);
+  margin: 3rem 0;
+  position: relative;
+  text-align: center;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--border-brown), transparent);
+}
+
+hr::after {
+  content: '❦';
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--parchment-light);
+  padding: 0 1rem;
+  color: var(--gold);
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px var(--shadow-ink);
+  animation: fadeInOut 4s ease-in-out infinite;
+}
+
+/* 卡片樣式 - 古書風格 */
+.card {
+  background: 
+    linear-gradient(135deg, var(--parchment) 0%, var(--parchment-light) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.02) 2px,
+      rgba(139, 111, 71, 0.02) 4px
+    );
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 
+    4px 4px 12px var(--shadow-ink),
+    inset 0 0 20px rgba(139, 111, 71, 0.05);
+  border: 2px solid var(--border-brown);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  box-shadow: 0 2px 4px var(--shadow-ink);
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 97, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
+.card:hover {
+  transform: translateY(-3px) perspective(1000px) rotateX(1deg);
+  box-shadow: 
+    6px 6px 16px var(--shadow-ink),
+    inset 0 0 30px rgba(139, 111, 71, 0.08);
+}
+
+/* 按鈕樣式 - 古書風格 */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: var(--ink);
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    3px 3px 8px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--border-brown);
+  font-family: "Noto Serif TC", serif;
+  position: relative;
+  overflow: hidden;
+  font-variant-ligatures: common-ligatures;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+  transform: translateY(-2px) perspective(500px) translateZ(5px);
+  box-shadow: 
+    5px 5px 12px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+/* 頁腳 */
+.site-footer {
+  background: 
+    linear-gradient(135deg, var(--parchment-dark) 0%, var(--parchment) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.03) 2px,
+      rgba(139, 111, 71, 0.03) 4px
+    );
+  border-top: 3px double var(--border-brown);
+  padding: 2rem 0;
+  margin-top: 3rem;
+  text-align: center;
+  color: var(--ink-light);
+  box-shadow: 
+    0 -4px 12px var(--shadow-ink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.site-footer a {
+  color: var(--accent-red);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 0 20px;
+  }
+
+  .site-header .wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav {
+    margin-top: 1rem;
+    gap: 0.5rem;
+  }
+
+  .site-content {
+    padding: 2rem 1.5rem;
+    transform: none;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  table {
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 0.5rem;
+  }
+}
+
+/* 打印樣式 */
+@media print {
+  body {
+    background: white;
+    filter: none;
+  }
+
+  .site-header {
+    background: var(--gold);
+  }
+
+  .site-content {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* 性能優化 */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 滾動條樣式 - 古書風格 */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--parchment-dark);
+  border-left: 1px solid var(--border-brown);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  border: 2px solid var(--parchment-dark);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold), var(--gold-light), var(--gold));
+}

@@ -38,4 +38,5 @@ exclude:
   - .git
   - .gitignore
   - fe_sheet.md  # 前端技術速查表，不顯示在網站上
+  - template/    # React 模板，不顯示在網站上
 
