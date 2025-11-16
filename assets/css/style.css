@@ -46,6 +46,8 @@ body {
   position: relative;
   /* 添加微妙的紙張質感濾鏡 */
   filter: sepia(5%) contrast(98%) brightness(102%);
+  /* 確保內容在裝飾之上 */
+  z-index: 1;
 }
 
 /* 紙張老化效果 - 使用偽元素 */
@@ -81,7 +83,7 @@ body::before {
   margin: 0 auto;
   padding: 0 40px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* 導航欄 - 古書風格 */
@@ -107,7 +109,7 @@ body::before {
     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   position: relative;
-  z-index: 10;
+  z-index: 100;
   /* 3D 效果 */
   transform: perspective(1000px) rotateX(0deg);
   transition: transform 0.3s ease;
@@ -258,6 +260,7 @@ body::before {
     inset 0 0 60px rgba(201, 169, 97, 0.05);
   margin-bottom: 2rem;
   position: relative;
+  z-index: 2;
   /* 3D 紙張效果 */
   transform: perspective(2000px) rotateX(0.5deg);
   transition: transform 0.3s ease;
