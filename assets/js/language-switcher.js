@@ -77,7 +77,7 @@
     return 'index';
   }
 
-  // Switch language
+  // Switch language - ONLY called when user clicks the button
   function switchLanguage(targetLang) {
     const currentLang = getCurrentLanguage();
     if (currentLang === targetLang) {
@@ -92,10 +92,13 @@
       // Save language preference
       localStorage.setItem('preferredLanguage', targetLang);
       
-      // Navigate to target URL
+      // Navigate to target URL - ONLY when user explicitly clicks
       window.location.href = targetUrl;
     }
   }
+  
+  // Prevent any automatic redirects - this function is never called automatically
+  // It can only be triggered by user clicking the language switcher button
 
   // Create language switcher button
   function createLanguageSwitcher() {
@@ -139,6 +142,7 @@
   }
 
   // Initialize on page load
+  // IMPORTANT: No automatic redirects - users must manually click the language switcher button
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initLanguageSwitcher();
@@ -149,24 +153,8 @@
     applyLanguageStyles();
   }
 
-  // Check for saved language preference on first visit
-  // DISABLED: Auto-redirect can cause 404 errors if the target page doesn't exist yet
-  // Users can manually switch language using the button
-  // const savedLang = localStorage.getItem('preferredLanguage');
-  // if (savedLang && savedLang !== getCurrentLanguage()) {
-  //   // Only redirect if we're on the index page
-  //   const pageType = getPageType();
-  //   if (pageType === 'index') {
-  //     const languageMap = getLanguageMap();
-  //     const targetUrl = languageMap[savedLang][pageType];
-  //     if (targetUrl && !window.location.pathname.includes('_en')) {
-  //       // Small delay to avoid flicker
-  //       setTimeout(() => {
-  //         window.location.href = targetUrl;
-  //       }, 100);
-  //     }
-  //   }
-  // }
+  // NO AUTO-REDIRECT CODE - All language switching must be done manually via the button
+  // This prevents 404 errors when pages don't exist yet
 
 })();
 
