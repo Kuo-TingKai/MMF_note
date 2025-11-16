@@ -3,8 +3,10 @@
 (function() {
   'use strict';
 
-  let canvas = null;
-  let ctx = null;
+  let backgroundCanvas = null;
+  let backgroundCtx = null;
+  let foregroundCanvas = null;
+  let foregroundCtx = null;
   let animationId = null;
   let currentEquation = null;
   let drawingProgress = 0;
@@ -13,6 +15,7 @@
   let isErasing = false;
   let pathPoints = [];
   let currentPathIndex = 0;
+  const FOREGROUND_RATIO = 0.4; // 40% 的方程式在前景，60% 在背景
 
   // 模形式方程式模板
   const equations = [
@@ -70,9 +73,10 @@
 
   // 初始化 Canvas
   function initCanvas() {
-    canvas = document.createElement('canvas');
-    canvas.id = 'modular-form-canvas';
-    canvas.style.cssText = `
+    // 背景 Canvas
+    backgroundCanvas = document.createElement('canvas');
+    backgroundCanvas.id = 'modular-form-canvas-bg';
+    backgroundCanvas.style.cssText = `
       position: fixed;
       top: 0;
       left: 0;
@@ -83,9 +87,28 @@
       opacity: 0.25;
       mix-blend-mode: multiply;
     `;
-    document.body.appendChild(canvas);
+    document.body.appendChild(backgroundCanvas);
     
-    ctx = canvas.getContext('2d');
+    backgroundCtx = backgroundCanvas.getContext('2d');
+    
+    // 前景 Canvas
+    foregroundCanvas = document.createElement('canvas');
+    foregroundCanvas.id = 'modular-form-canvas-fg';
+    foregroundCanvas.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+    `;
+    document.body.appendChild(foregroundCanvas);
+    
+    foregroundCtx = foregroundCanvas.getContext('2d');
+    
     resizeCanvas();
     
     window.addEventListener('resize', () => {
@@ -95,21 +118,31 @@
 
   // 調整 Canvas 大小
   function resizeCanvas() {
-    if (!canvas) return;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    if (ctx) {
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+    if (backgroundCanvas) {
+      backgroundCanvas.width = window.innerWidth;
+      backgroundCanvas.height = window.innerHeight;
+      if (backgroundCtx) {
+        backgroundCtx.lineCap = 'round';
+        backgroundCtx.lineJoin = 'round';
+      }
+    }
+    
+    if (foregroundCanvas) {
+      foregroundCanvas.width = window.innerWidth;
+      foregroundCanvas.height = window.innerHeight;
+      if (foregroundCtx) {
+        foregroundCtx.lineCap = 'round';
+        foregroundCtx.lineJoin = 'round';
+      }
     }
   }
 
   // 生成手寫路徑點 - 使用實際的筆劃模擬
-  function generateHandwritingPath(text, x, y, fontSize) {
+  function generateHandwritingPath(text, x, y, fontSize, targetCtx) {
     const points = [];
-    ctx.font = `${fontSize}px "Noto Serif TC", serif`;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
+    targetCtx.font = `${fontSize}px "Noto Serif TC", serif`;
+    targetCtx.textAlign = 'left';
+    targetCtx.textBaseline = 'top';
     
     // 為每個字符生成路徑點
     let currentX = x;
@@ -117,7 +150,7 @@
     
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
-      const charMetrics = ctx.measureText(char);
+      const charMetrics = targetCtx.measureText(char);
       const charWidth = charMetrics.width;
       
       // 為這個字符生成多個點，模擬手寫
@@ -156,17 +189,25 @@
     const randomIndex = Math.floor(Math.random() * equations.length);
     currentEquation = equations[randomIndex];
     
+    // 決定是前景還是背景
+    const isForeground = Math.random() < FOREGROUND_RATIO;
+    currentEquation.isForeground = isForeground;
+    
+    // 選擇對應的 Canvas
+    const targetCanvas = isForeground ? foregroundCanvas : backgroundCanvas;
+    
     // 隨機位置（避免在內容區域中心）
-    const margin = 100;
-    const x = margin + Math.random() * (canvas.width - 2 * margin);
-    const y = margin + Math.random() * (canvas.height - 2 * margin);
+    const margin = isForeground ? 50 : 100; // 前景可以更靠近中心
+    const x = margin + Math.random() * (targetCanvas.width - 2 * margin);
+    const y = margin + Math.random() * (targetCanvas.height - 2 * margin);
     
     // 生成手寫路徑
     pathPoints = generateHandwritingPath(
       currentEquation.text,
       x,
       y,
-      currentEquation.fontSize
+      currentEquation.fontSize,
+      isForeground ? foregroundCtx : backgroundCtx
     );
     
     currentPathIndex = 0;
@@ -178,15 +219,19 @@
 
   // 繪製方程式 - 模擬手寫效果
   function drawEquation() {
-    if (!ctx || !currentEquation || pathPoints.length === 0) return;
+    if (!currentEquation || pathPoints.length === 0) return;
+    
+    const ctx = currentEquation.isForeground ? foregroundCtx : backgroundCtx;
+    if (!ctx) return;
     
     // 計算要繪製的點數
     const totalPoints = pathPoints.length;
     const pointsToDraw = Math.floor(totalPoints * drawingProgress);
     
     if (pointsToDraw > 0) {
-      // 繪製主路徑
-      ctx.strokeStyle = 'rgba(139, 111, 71, 0.6)';
+      // 繪製主路徑（前景透明度更高）
+      const baseOpacity = currentEquation.isForeground ? 0.7 : 0.6;
+      ctx.strokeStyle = `rgba(139, 111, 71, ${baseOpacity})`;
       ctx.lineWidth = 2.5;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -214,7 +259,8 @@
       
       // 在關鍵點添加墨水點，增強手寫感
       if (pointsToDraw > 10) {
-        ctx.fillStyle = 'rgba(139, 111, 71, 0.4)';
+        const dotOpacity = currentEquation.isForeground ? 0.5 : 0.4;
+        ctx.fillStyle = `rgba(139, 111, 71, ${dotOpacity})`;
         
         // 每隔幾個點添加一個小墨水點
         for (let i = 5; i < pointsToDraw; i += 8) {
@@ -229,7 +275,10 @@
 
   // 擦除方程式 - 模擬逐漸消失
   function eraseEquation() {
-    if (!ctx || !currentEquation) return;
+    if (!currentEquation) return;
+    
+    const ctx = currentEquation.isForeground ? foregroundCtx : backgroundCtx;
+    if (!ctx) return;
     
     const totalPoints = pathPoints.length;
     const pointsToKeep = Math.floor(totalPoints * (1 - erasingProgress));
@@ -279,10 +328,15 @@
 
   // 動畫循環
   function animate() {
-    if (!canvas || !ctx) return;
+    if (!backgroundCanvas || !foregroundCanvas) return;
     
     // 清除畫布
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (backgroundCtx) {
+      backgroundCtx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
+    }
+    if (foregroundCtx) {
+      foregroundCtx.clearRect(0, 0, foregroundCanvas.width, foregroundCanvas.height);
+    }
     
     if (!currentEquation) {
       startNewEquation();
