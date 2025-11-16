@@ -285,7 +285,8 @@ body::before {
     100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
     100% 100%, 100% 100%;
   padding: 3rem 4rem;
-  border: 3px double var(--border-brown);
+  /* 邊框將通過偽元素動態生成，以跟隨破損軌跡 */
+  border: none;
   /* 不規則邊角 - 模擬破損和皺摺 */
   border-radius: 
     12px 8px 15px 10px  /* 左上角 */

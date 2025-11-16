@@ -3,7 +3,130 @@
 (function() {
   'use strict';
 
-  // 生成不規則邊緣的 clip-path
+  // 創建跟隨破損軌跡的雙線條邊框
+  function createTornBorder(element, edgePoints) {
+    // 等待元素尺寸確定
+    const updateBorder = () => {
+      const rect = element.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      
+      // 創建 SVG 邊框
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.className = 'torn-border';
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: visible;
+      `;
+      
+      // 將百分比點轉換為像素坐標
+      function pointsToPixels(points) {
+        return points.map(point => {
+          const [x, y] = point.split('%').map(v => parseFloat(v));
+          return {
+            x: (x / 100) * width,
+            y: (y / 100) * height
+          };
+        });
+      }
+      
+      const pixelPoints = pointsToPixels(edgePoints);
+      
+      // 計算垂直偏移路徑
+      function offsetPath(points, offset) {
+        const pathData = [];
+        for (let i = 0; i < points.length; i++) {
+          const current = points[i];
+          const next = points[(i + 1) % points.length];
+          const prev = points[(i - 1 + points.length) % points.length];
+          
+          // 計算切線方向
+          const dx1 = next.x - current.x;
+          const dy1 = next.y - current.y;
+          const dx2 = current.x - prev.x;
+          const dy2 = current.y - prev.y;
+          
+          // 平均切線方向
+          const avgDx = (dx1 + dx2) / 2;
+          const avgDy = (dy1 + dy2) / 2;
+          const length = Math.sqrt(avgDx * avgDx + avgDy * avgDy);
+          
+          // 垂直方向（法向量）
+          const perpX = -avgDy / length;
+          const perpY = avgDx / length;
+          
+          const offsetX = current.x + perpX * offset;
+          const offsetY = current.y + perpY * offset;
+          
+          if (i === 0) {
+            pathData.push(`M ${offsetX} ${offsetY}`);
+          } else {
+            pathData.push(`L ${offsetX} ${offsetY}`);
+          }
+        }
+        pathData.push('Z');
+        return pathData.join(' ');
+      }
+      
+      // 創建外層邊框（向外偏移）
+      const outerPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const outerPathData = offsetPath(pixelPoints, 3);
+      outerPath.setAttribute('d', outerPathData);
+      outerPath.setAttribute('fill', 'none');
+      outerPath.setAttribute('stroke', '#8b6f47');
+      outerPath.setAttribute('stroke-width', '3');
+      outerPath.setAttribute('stroke-linejoin', 'round');
+      outerPath.setAttribute('stroke-linecap', 'round');
+      
+      // 創建內層邊框（向內偏移）
+      const innerPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const innerPathData = offsetPath(pixelPoints, -3);
+      innerPath.setAttribute('d', innerPathData);
+      innerPath.setAttribute('fill', 'none');
+      innerPath.setAttribute('stroke', '#8b6f47');
+      innerPath.setAttribute('stroke-width', '3');
+      innerPath.setAttribute('stroke-linejoin', 'round');
+      innerPath.setAttribute('stroke-linecap', 'round');
+      
+      svg.appendChild(outerPath);
+      svg.appendChild(innerPath);
+      
+      // 移除舊的邊框（如果存在）
+      const oldBorder = element.querySelector('.torn-border');
+      if (oldBorder) {
+        oldBorder.remove();
+      }
+      
+      element.appendChild(svg);
+    };
+    
+    // 等待元素尺寸確定後執行
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        updateBorder();
+      });
+    });
+    
+    // 監聽窗口大小變化
+    let resizeTimer;
+    const resizeHandler = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateBorder, 100);
+    };
+    window.addEventListener('resize', resizeHandler);
+    
+    // 存儲 resize handler 以便後續清理（如果需要）
+    element._resizeHandler = resizeHandler;
+  }
+
+  // 生成不規則邊緣的 clip-path（保留用於其他元素）
   function generateTornEdge(edge, segments = 20) {
     const points = [];
     for (let i = 0; i <= segments; i++) {
@@ -34,42 +157,45 @@
   function addDamageEffects(element, intensity = 'medium') {
     if (!element) return;
 
-    // 為元素本身添加不規則邊緣
+    // 為元素本身添加不規則邊緣和跟隨破損的邊框
     if (intensity === 'high' && element.classList.contains('site-content')) {
       // 生成四條邊的點，確保正確連接
-      const segments = 30;
+      const segments = 40; // 增加分段數以獲得更平滑的邊緣
       const allPoints = [];
       
-      // 頂邊（從左到右，不包括最後一點）
+      // 頂邊（從左到右）
       for (let i = 0; i < segments; i++) {
         const t = i / segments;
-        const variation = (Math.random() - 0.5) * 0.02;
-        allPoints.push(`${t * 100}% ${Math.max(-1, variation * 100)}%`);
+        const variation = (Math.random() - 0.5) * 0.015;
+        allPoints.push(`${t * 100}% ${Math.max(-0.5, variation * 100)}%`);
       }
       
-      // 右邊（從上到下，不包括最後一點）
+      // 右邊（從上到下）
       for (let i = 0; i < segments; i++) {
         const t = i / segments;
-        const variation = (Math.random() - 0.5) * 0.02;
-        allPoints.push(`${Math.min(101, 100 + variation * 100)}% ${t * 100}%`);
+        const variation = (Math.random() - 0.5) * 0.015;
+        allPoints.push(`${Math.min(100.5, 100 + variation * 100)}% ${t * 100}%`);
       }
       
-      // 底邊（從右到左，不包括最後一點）
+      // 底邊（從右到左）
       for (let i = 0; i < segments; i++) {
         const t = i / segments;
-        const variation = (Math.random() - 0.5) * 0.02;
-        allPoints.push(`${(1 - t) * 100}% ${Math.min(101, 100 + variation * 100)}%`);
+        const variation = (Math.random() - 0.5) * 0.015;
+        allPoints.push(`${(1 - t) * 100}% ${Math.min(100.5, 100 + variation * 100)}%`);
       }
       
-      // 左邊（從下到上，包括回到起點）
+      // 左邊（從下到上，回到起點）
       for (let i = 0; i <= segments; i++) {
         const t = i / segments;
-        const variation = (Math.random() - 0.5) * 0.02;
-        allPoints.push(`${Math.max(-1, variation * 100)}% ${(1 - t) * 100}%`);
+        const variation = (Math.random() - 0.5) * 0.015;
+        allPoints.push(`${Math.max(-0.5, variation * 100)}% ${(1 - t) * 100}%`);
       }
       
       const clipPath = `polygon(${allPoints.join(', ')})`;
       element.style.clipPath = clipPath;
+      
+      // 創建跟隨破損軌跡的雙線條邊框
+      createTornBorder(element, allPoints);
     }
 
     const damageContainer = document.createElement('div');
@@ -89,65 +215,65 @@
     const creaseCount = intensity === 'high' ? 6 : intensity === 'medium' ? 4 : 2;
     const tearCount = intensity === 'high' ? 3 : intensity === 'medium' ? 2 : 1;
 
-    // 創建皺摺線 - 短筆觸，像筆尖不小心劃過的痕跡
+    // 創建皺摺線 - 非常短的筆觸，像筆尖不小心劃過的痕跡
     for (let i = 0; i < creaseCount; i++) {
       const crease = document.createElement('div');
       crease.className = 'parchment-crease';
       
       const isVertical = Math.random() > 0.5;
-      // 非常短的長度，像意外劃過的痕跡（2-6%）
-      const length = 2 + Math.random() * 4;
+      // 非常短的長度，像意外劃過的痕跡（0.5-2%）
+      const length = 0.5 + Math.random() * 1.5;
       const position = 15 + Math.random() * 70; // 避免太靠近邊緣
       
       if (isVertical) {
-        // 垂直短筆觸 - 單筆觸
+        // 垂直短筆觸 - 單筆觸，更細更短
         const x = 15 + Math.random() * 70;
-        const rotation = -0.5 + Math.random() * 1; // 非常輕微的傾斜
-        const opacity = 0.4 + Math.random() * 0.3; // 0.4-0.7
+        const rotation = -0.3 + Math.random() * 0.6; // 非常輕微的傾斜
+        const opacity = 0.6 + Math.random() * 0.3; // 0.6-0.9，更深
         
         crease.style.cssText = `
           position: absolute;
           left: ${x}%;
           top: ${position}%;
-          width: 0.5px;
+          width: 0.3px;
           height: ${length}%;
           background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(139, 111, 71, ${opacity * 0.5}) 5%,
-            rgba(139, 111, 71, ${opacity}) 30%,
-            rgba(139, 111, 71, ${opacity}) 70%,
-            rgba(139, 111, 71, ${opacity * 0.5}) 95%,
+            rgba(44, 24, 16, ${opacity * 0.6}) 10%,
+            rgba(44, 24, 16, ${opacity}) 40%,
+            rgba(44, 24, 16, ${opacity}) 60%,
+            rgba(44, 24, 16, ${opacity * 0.6}) 90%,
             transparent 100%
           );
-          box-shadow: 0 0 0.5px rgba(44, 24, 16, 0.1);
+          box-shadow: 0 0 0.3px rgba(44, 24, 16, 0.2);
           transform: rotate(${rotation}deg);
-          opacity: ${opacity};
+          opacity: 1;
         `;
       } else {
-        // 水平短筆觸 - 單筆觸
+        // 水平短筆觸 - 單筆觸，更細更短
         const y = 15 + Math.random() * 70;
-        const rotation = -0.5 + Math.random() * 1; // 非常輕微的傾斜
-        const opacity = 0.4 + Math.random() * 0.3; // 0.4-0.7
+        const rotation = -0.3 + Math.random() * 0.6; // 非常輕微的傾斜
+        const opacity = 0.6 + Math.random() * 0.3; // 0.6-0.9，更深
         
         crease.style.cssText = `
           position: absolute;
           left: ${position}%;
           top: ${y}%;
           width: ${length}%;
-          height: 0.5px;
+          height: 0.3px;
           background: linear-gradient(
             to right,
             transparent 0%,
-            rgba(139, 111, 71, ${opacity * 0.5}) 5%,
-            rgba(139, 111, 71, ${opacity}) 30%,
-            rgba(139, 111, 71, ${opacity}) 70%,
-            rgba(139, 111, 71, ${opacity * 0.5}) 95%,
+            rgba(44, 24, 16, ${opacity * 0.6}) 10%,
+            rgba(44, 24, 16, ${opacity}) 40%,
+            rgba(44, 24, 16, ${opacity}) 60%,
+            rgba(44, 24, 16, ${opacity * 0.6}) 90%,
             transparent 100%
           );
-          box-shadow: 0 0 0.5px rgba(44, 24, 16, 0.1);
+          box-shadow: 0 0 0.3px rgba(44, 24, 16, 0.2);
           transform: rotate(${rotation}deg);
-          opacity: ${opacity};
+          opacity: 1;
         `;
       }
       
