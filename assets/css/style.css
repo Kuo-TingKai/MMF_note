@@ -233,67 +233,137 @@ body::before {
   transform: perspective(500px) translateZ(0);
 }
 
-/* 主內容區 - 真實羊皮紙效果 */
+/* 主內容區 - 古老羊皮紙卷軸效果 */
 .site-content {
   background: 
-    /* 基礎羊皮紙 */
-    linear-gradient(135deg, var(--parchment-light) 0%, var(--parchment) 50%, var(--parchment-light) 100%),
-    /* 紙張纖維紋理 */
+    /* 基礎羊皮紙顏色 - 更深的色調模擬老化 */
+    linear-gradient(135deg, 
+      var(--parchment-aged) 0%, 
+      var(--parchment-dark) 15%, 
+      var(--parchment) 30%,
+      var(--parchment-light) 50%,
+      var(--parchment) 70%,
+      var(--parchment-dark) 85%,
+      var(--parchment-aged) 100%
+    ),
+    /* 紙張纖維紋理 - 更明顯 */
     repeating-linear-gradient(
       0deg,
       transparent,
       transparent 1px,
-      rgba(139, 111, 71, 0.02) 1px,
-      rgba(139, 111, 71, 0.02) 2px
+      rgba(139, 111, 71, 0.04) 1px,
+      rgba(139, 111, 71, 0.04) 2px
     ),
-    /* 不規則老化效果 */
-    radial-gradient(ellipse at 10% 20%, rgba(139, 111, 71, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 90% 80%, rgba(139, 111, 71, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 97, 0.04) 0%, transparent 60%);
-  background-size: 100% 100%, 100% 4px, 100% 100%, 100% 100%, 100% 100%;
+    /* 垂直纖維紋理 */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 111, 71, 0.02) 2px,
+      rgba(139, 111, 71, 0.02) 4px
+    ),
+    /* 大面積污漬和老化斑點 */
+    radial-gradient(ellipse 400px 200px at 15% 25%, rgba(139, 111, 71, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 300px 150px at 85% 75%, rgba(139, 111, 71, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 250px 300px at 50% 10%, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 200px 180px at 20% 80%, rgba(139, 111, 71, 0.09) 0%, transparent 50%),
+    radial-gradient(ellipse 350px 250px at 80% 30%, rgba(139, 111, 71, 0.11) 0%, transparent 55%),
+    /* 小污漬點 */
+    radial-gradient(circle 15px at 25% 40%, rgba(139, 111, 71, 0.15) 0%, transparent 70%),
+    radial-gradient(circle 12px at 70% 60%, rgba(139, 111, 71, 0.12) 0%, transparent 70%),
+    radial-gradient(circle 18px at 45% 85%, rgba(139, 111, 71, 0.14) 0%, transparent 70%),
+    radial-gradient(circle 10px at 90% 20%, rgba(139, 111, 71, 0.13) 0%, transparent 70%),
+    radial-gradient(circle 14px at 10% 70%, rgba(139, 111, 71, 0.11) 0%, transparent 70%),
+    /* 邊緣老化效果 */
+    linear-gradient(to right, rgba(139, 111, 71, 0.15) 0%, transparent 5%, transparent 95%, rgba(139, 111, 71, 0.15) 100%),
+    linear-gradient(to bottom, rgba(139, 111, 71, 0.12) 0%, transparent 3%, transparent 97%, rgba(139, 111, 71, 0.12) 100%);
+  background-size: 
+    100% 100%, 
+    100% 4px, 
+    8px 100%,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    100% 100%, 100% 100%;
   padding: 3rem 4rem;
   border: 3px double var(--border-brown);
   border-radius: 8px;
   box-shadow: 
     0 0 30px var(--shadow-ink),
-    inset 0 0 40px rgba(139, 111, 71, 0.1),
-    inset 0 0 60px rgba(201, 169, 97, 0.05);
+    inset 0 0 40px rgba(139, 111, 71, 0.15),
+    inset 0 0 60px rgba(201, 169, 97, 0.08),
+    /* 卷軸邊緣陰影 */
+    inset -20px 0 30px rgba(139, 111, 71, 0.1),
+    inset 20px 0 30px rgba(139, 111, 71, 0.1);
   margin-bottom: 2rem;
   position: relative;
   z-index: 3;
   /* 3D 紙張效果 */
   transform: perspective(2000px) rotateX(0.5deg);
   transition: transform 0.3s ease;
-  /* 紙張質感濾鏡 */
-  filter: sepia(8%) contrast(99%) brightness(101%);
+  /* 紙張質感濾鏡 - 更強的老化效果 */
+  filter: sepia(12%) contrast(97%) brightness(98%) saturate(90%);
   /* 混合模式增強質感 */
   mix-blend-mode: normal;
+  /* 卷軸質感 */
+  overflow: hidden;
+  /* 添加額外的質感層 */
+  position: relative;
 }
 
+/* 為內容區域添加額外的污漬層 */
+.site-content > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 卷軸左側裝飾 */
 .site-content::before {
-  content: '❦';
+  content: '';
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  color: var(--gold);
-  font-size: 2rem;
-  opacity: 0.4;
-  text-shadow: 2px 2px 4px var(--shadow-ink);
-  animation: fadeInOut 4s ease-in-out infinite;
-  transform: rotate(-15deg);
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: 
+    /* 卷軸邊緣質感 */
+    linear-gradient(to right, 
+      rgba(139, 111, 71, 0.3) 0%,
+      rgba(139, 111, 71, 0.2) 30%,
+      rgba(139, 111, 71, 0.1) 60%,
+      transparent 100%
+    ),
+    /* 邊緣污漬 */
+    radial-gradient(ellipse 20px 40px at 10px 20%, rgba(139, 111, 71, 0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 15px 50px at 8px 60%, rgba(139, 111, 71, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 18px 45px at 12px 80%, rgba(139, 111, 71, 0.22) 0%, transparent 58%);
+  pointer-events: none;
+  z-index: 1;
+  border-right: 2px solid rgba(139, 111, 71, 0.3);
 }
 
+/* 卷軸右側裝飾 */
 .site-content::after {
-  content: '❦';
+  content: '';
   position: absolute;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  color: var(--gold);
-  font-size: 2rem;
-  opacity: 0.4;
-  text-shadow: 2px 2px 4px var(--shadow-ink);
-  animation: fadeInOut 4s ease-in-out infinite 2s;
-  transform: rotate(165deg);
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 100%;
+  background: 
+    /* 卷軸邊緣質感 */
+    linear-gradient(to left, 
+      rgba(139, 111, 71, 0.3) 0%,
+      rgba(139, 111, 71, 0.2) 30%,
+      rgba(139, 111, 71, 0.1) 60%,
+      transparent 100%
+    ),
+    /* 邊緣污漬 */
+    radial-gradient(ellipse 20px 40px at 20px 30%, rgba(139, 111, 71, 0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 15px 50px at 22px 50%, rgba(139, 111, 71, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 18px 45px at 18px 70%, rgba(139, 111, 71, 0.22) 0%, transparent 58%);
+  pointer-events: none;
+  z-index: 1;
+  border-left: 2px solid rgba(139, 111, 71, 0.3);
 }
 
 @keyframes fadeInOut {
