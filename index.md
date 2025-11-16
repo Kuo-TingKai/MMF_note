@@ -1,6 +1,7 @@
 ---
 layout: default
 title: 首頁
+lang: zh
 ---
 
 # 模形式與模擬模形式文檔

@@ -2,6 +2,7 @@
 layout: default
 title: 主速查表
 permalink: /mmf_sheet.html
+lang: zh
 ---
 
 # 模形式與模擬模形式概念速查表

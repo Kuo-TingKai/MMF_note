@@ -2,6 +2,7 @@
 layout: default
 title: 補充概念速查表
 permalink: /supplement_sheet.html
+lang: zh
 ---
 
 # 模形式與模擬模形式補充概念速查表

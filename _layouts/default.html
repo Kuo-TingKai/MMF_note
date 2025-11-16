@@ -15,6 +15,9 @@
     <!-- 古樸字體 - 使用 Noto Serif SC 作為備選，並添加手寫風格 -->
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     
+    <!-- English Fonts - Elvish-style font for titles and handwritten font for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=MedievalSharp&family=Uncial+Antiqua&family=Kalam:wght@300;400;700&family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <!-- 自定義 CSS -->
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
     
@@ -48,6 +51,9 @@
     <!-- 羊皮紙破洞效果 -->
     <script src="{{ '/assets/js/parchment-holes.js' | relative_url }}" defer></script>
     
+    <!-- 語言切換功能 -->
+    <script src="{{ '/assets/js/language-switcher.js' | relative_url }}" defer></script>
+    
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
   </head>
@@ -56,9 +62,15 @@
       <div class="wrapper">
         <a class="site-title" rel="author" href="{{ '/' | relative_url }}">{{ site.title }}</a>
         <nav class="site-nav">
-          <a href="{{ '/' | relative_url }}" {% if page.url == '/' or page.url == '/index.html' %}class="active"{% endif %}>首頁</a>
-          <a href="{{ '/mmf_sheet.html' | relative_url }}" {% if page.url == '/mmf_sheet.html' %}class="active"{% endif %}>主速查表</a>
-          <a href="{{ '/supplement_sheet.html' | relative_url }}" {% if page.url == '/supplement_sheet.html' %}class="active"{% endif %}>補充概念</a>
+          {% if page.lang == 'en' %}
+            <a href="{{ '/index_en.html' | relative_url }}" {% if page.url == '/index_en.html' %}class="active"{% endif %}>Home</a>
+            <a href="{{ '/mmf_sheet_en.html' | relative_url }}" {% if page.url == '/mmf_sheet_en.html' %}class="active"{% endif %}>Main Reference</a>
+            <a href="{{ '/supplement_sheet_en.html' | relative_url }}" {% if page.url == '/supplement_sheet_en.html' %}class="active"{% endif %}>Supplementary</a>
+          {% else %}
+            <a href="{{ '/' | relative_url }}" {% if page.url == '/' or page.url == '/index.html' %}class="active"{% endif %}>首頁</a>
+            <a href="{{ '/mmf_sheet.html' | relative_url }}" {% if page.url == '/mmf_sheet.html' %}class="active"{% endif %}>主速查表</a>
+            <a href="{{ '/supplement_sheet.html' | relative_url }}" {% if page.url == '/supplement_sheet.html' %}class="active"{% endif %}>補充概念</a>
+          {% endif %}
         </nav>
       </div>
     </header>
