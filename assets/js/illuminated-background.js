@@ -4,17 +4,19 @@
   'use strict';
 
   // 裝飾元素容器
-  let decorationContainer = null;
+  let backgroundContainer = null;
+  let foregroundContainer = null;
   let animationId = null;
   let activeDecorations = [];
-  const MAX_DECORATIONS = 8; // 同時存在的最大裝飾數量
+  const MAX_DECORATIONS = 12; // 同時存在的最大裝飾數量（增加以支持前景和背景）
   const SPAWN_INTERVAL = 3000; // 生成間隔（毫秒）
   const DECORATION_LIFETIME = 15000; // 裝飾元素生命週期（毫秒）
+  const FOREGROUND_RATIO = 0.4; // 40% 的裝飾在前景，60% 在背景
 
-  // 創建裝飾容器
-  function createDecorationContainer() {
+  // 創建背景裝飾容器
+  function createBackgroundContainer() {
     const container = document.createElement('div');
-    container.id = 'illuminated-decorations';
+    container.id = 'illuminated-decorations-bg';
     container.style.cssText = `
       position: fixed;
       top: 0;
@@ -23,6 +25,24 @@
       height: 100%;
       pointer-events: none;
       z-index: 0;
+      overflow: hidden;
+    `;
+    document.body.appendChild(container);
+    return container;
+  }
+
+  // 創建前景裝飾容器（在內容上方但在導航欄下方）
+  function createForegroundContainer() {
+    const container = document.createElement('div');
+    container.id = 'illuminated-decorations-fg';
+    container.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
       overflow: hidden;
     `;
     document.body.appendChild(container);
@@ -321,19 +341,34 @@
 
   // 創建裝飾元素
   function createDecoration() {
-    if (!decorationContainer) return;
+    if (!backgroundContainer || !foregroundContainer) return;
 
-    // 隨機位置（避免在內容區域中心）
+    // 決定是前景還是背景裝飾
+    const isForeground = Math.random() < FOREGROUND_RATIO;
+    const container = isForeground ? foregroundContainer : backgroundContainer;
+
+    // 隨機位置
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
-    // 避免在主要內容區域生成
-    const margin = 200;
-    const x = margin + Math.random() * (viewportWidth - 2 * margin);
-    const y = margin + Math.random() * (viewportHeight - 2 * margin);
+    let x, y;
+    if (isForeground) {
+      // 前景裝飾：可以在內容區域上方，但避免完全遮擋文字
+      // 可以更靠近中心，但使用更低的透明度
+      const margin = 100;
+      x = margin + Math.random() * (viewportWidth - 2 * margin);
+      y = margin + Math.random() * (viewportHeight - 2 * margin);
+    } else {
+      // 背景裝飾：避免在主要內容區域
+      const margin = 200;
+      x = margin + Math.random() * (viewportWidth - 2 * margin);
+      y = margin + Math.random() * (viewportHeight - 2 * margin);
+    }
     
-    // 隨機大小
-    const size = 60 + Math.random() * 80; // 60-140px
+    // 隨機大小（前景裝飾可以稍小一些）
+    const size = isForeground 
+      ? 40 + Math.random() * 60  // 40-100px（前景）
+      : 60 + Math.random() * 80; // 60-140px（背景）
     
     // 選擇裝飾類型
     const type = getRandomDecoration();
@@ -345,14 +380,18 @@
     const decoration = generator(size, x, y);
     decoration.dataset.type = type;
     decoration.dataset.created = Date.now();
+    decoration.dataset.layer = isForeground ? 'foreground' : 'background';
     
-    decorationContainer.appendChild(decoration);
+    container.appendChild(decoration);
     activeDecorations.push(decoration);
+
+    // 設置透明度（前景更透明，避免干擾閱讀）
+    const opacity = isForeground ? 0.08 : 0.15;
 
     // 淡入動畫
     requestAnimationFrame(() => {
       decoration.style.transition = 'opacity 2s ease-in, transform 2s ease-out';
-      decoration.style.opacity = '0.15';
+      decoration.style.opacity = opacity.toString();
       decoration.style.transform = `translate(-50%, -50%) scale(1) ${type === 'spiral' ? 'rotate(' + (Math.random() * 360) + 'deg)' : ''}`;
     });
   }
@@ -401,6 +440,8 @@
     activeDecorations.forEach(decoration => {
       const age = Date.now() - parseInt(decoration.dataset.created);
       const progress = age / DECORATION_LIFETIME;
+      const isForeground = decoration.dataset.layer === 'foreground';
+      const baseOpacity = isForeground ? 0.08 : 0.15;
       
       // 緩慢旋轉（僅對某些類型）
       if (decoration.dataset.type === 'spiral' || decoration.dataset.type === 'geometric') {
@@ -413,7 +454,7 @@
       // 逐漸降低透明度
       if (progress > 0.7) {
         const fadeProgress = (progress - 0.7) / 0.3;
-        decoration.style.opacity = (0.15 * (1 - fadeProgress)).toString();
+        decoration.style.opacity = (baseOpacity * (1 - fadeProgress)).toString();
       }
     });
 
@@ -422,11 +463,12 @@
 
   // 初始化
   function init() {
-    decorationContainer = createDecorationContainer();
+    backgroundContainer = createBackgroundContainer();
+    foregroundContainer = createForegroundContainer();
     
-    // 初始生成一些裝飾
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => createDecoration(), i * 1000);
+    // 初始生成一些裝飾（背景和前景混合）
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => createDecoration(), i * 800);
     }
     
     // 定期生成新裝飾

@@ -83,7 +83,7 @@ body::before {
   margin: 0 auto;
   padding: 0 40px;
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 /* 導航欄 - 古書風格 */
@@ -260,7 +260,7 @@ body::before {
     inset 0 0 60px rgba(201, 169, 97, 0.05);
   margin-bottom: 2rem;
   position: relative;
-  z-index: 2;
+  z-index: 3;
   /* 3D 紙張效果 */
   transform: perspective(2000px) rotateX(0.5deg);
   transition: transform 0.3s ease;
