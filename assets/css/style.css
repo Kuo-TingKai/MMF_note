@@ -196,13 +196,25 @@ body::before {
     0 0 8px rgba(201, 169, 97, 0.5),
     1px 1px 2px rgba(139, 111, 71, 0.6);
   letter-spacing: 2px;
-  font-family: "Noto Serif TC", serif;
+  /* 古樸字體 - 使用多個備選字體 */
+  font-family: "ZCOOL XiaoWei", "Ma Shan Zheng", "Noto Serif TC", serif;
   position: relative;
   transition: all 0.3s ease;
   z-index: 2;
   /* 手寫效果 */
   font-variant-ligatures: common-ligatures;
   font-feature-settings: "liga", "kern";
+  /* 添加輕微的破損效果 */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  /* 添加輕微的破損紋理 */
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(201, 169, 97, 0.5),
+    1px 1px 2px rgba(139, 111, 71, 0.6),
+    /* 輕微的破損陰影 */
+    -0.5px -0.5px 0 rgba(139, 111, 71, 0.1),
+    0.5px 0.5px 0 rgba(139, 111, 71, 0.1);
 }
 
 .site-title:hover {
